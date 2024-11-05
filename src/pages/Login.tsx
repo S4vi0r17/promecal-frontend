@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Sliders, Lock, Sun, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import axios, { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,12 +11,13 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import { Sliders, Lock, Sun, Moon } from 'lucide-react';
 
 export default function Component() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (
@@ -24,9 +28,39 @@ export default function Component() {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempted with:', email, password);
+
+    try {
+      const response = await axios.post<{ token: string }>(
+        'http://localhost:8080/auth/login',
+        {
+          username,
+          password,
+        }
+      );
+
+      if (response.status === 200) {
+        localStorage.setItem('token', response.data.token);
+        navigate('/home');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+  
+        if (axiosError.response) {
+          console.error(
+            'Error en la solicitud:',
+            axiosError.response.status,
+            axiosError.response.data
+          );
+        } else {
+          console.error('Error en el cliente:', axiosError.message);
+        }
+      } else {
+        console.error('Error desconocido:', error);
+      }
+    }
   };
 
   const toggleDarkMode = () => {
@@ -81,15 +115,18 @@ export default function Component() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className={darkMode ? 'text-white' : ''}>
-                Correo Electrónico
+              <Label
+                htmlFor="username"
+                className={darkMode ? 'text-white' : ''}
+              >
+                Nombre de usuario
               </Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="usuario@promecal.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                placeholder="ratatouille77"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 className={`w-full border-gray-300 ${
                   darkMode ? 'bg-gray-700 text-white placeholder-gray-400' : ''
@@ -114,15 +151,15 @@ export default function Component() {
                 }`}
               />
             </div>
+            <Button
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+              type="submit"
+            >
+              <Lock className="mr-2 h-4 w-4" /> Iniciar Sesión
+            </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white"
-            type="submit"
-          >
-            <Lock className="mr-2 h-4 w-4" /> Iniciar Sesión
-          </Button>
           <a
             href="#"
             className={`text-sm text-center ${
