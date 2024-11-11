@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Sliders, Lock, Sun, Moon } from 'lucide-react';
+import { User, Lock, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
@@ -94,7 +94,7 @@ export default function Component() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center">
-              <Sliders className="text-white w-8 h-8" />
+              <User className="text-white w-8 h-8" />
             </div>
           </div>
           <h2
@@ -109,7 +109,7 @@ export default function Component() {
               darkMode ? 'text-gray-300' : 'text-gray-500'
             }`}
           >
-            Sistema de Gestión Integral
+            Sistema de Gestíón de Recepción de Pedidos
           </p>
         </CardHeader>
         <CardContent>
