@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import Login from './pages/Login';
 import Dash from './pages/Dash/Dash';
-import Ejemplo1 from './pages/Dash/ejemplo1/Ejemplo1';
+import GestionUsuarios from './pages/Dash/GestionUsuarios/GestionUsuarios';
 import Ejemplo2 from './pages/Dash/ejemplo2/Ejemplo2';
 import ProtectedRoute from './pages/ProtectedRoute';
 
@@ -25,7 +25,7 @@ function App() {
           }
         >
           <Route index element={<Navigate to="1" replace />} />
-          <Route path="1" element={<Ejemplo1 />} />
+          <Route path="1" element={<GestionUsuarios />} />
           <Route path="2" element={<Ejemplo2 />} />
         </Route>
 
