@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -26,31 +26,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import api from '../../../services/api';
+import { UsuarioResponse } from '../../../interfaces/user.interface';
 
 export default function GestionUsuarios() {
-  const [usuarios, setUsuarios] = useState([
-    {
-      id: 1,
-      username: 'juan123',
-      fullName: 'Juan Pérez',
-      email: 'juan@example.com',
-      role: 'Usuario',
-    },
-    {
-      id: 2,
-      username: 'maria456',
-      fullName: 'María García',
-      email: 'maria@example.com',
-      role: 'Administrador',
-    },
-    {
-      id: 3,
-      username: 'carlos789',
-      fullName: 'Carlos Rodríguez',
-      email: 'carlos@example.com',
-      role: 'Editor',
-    },
-  ]);
+  const [usuarios, setUsuarios] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | string>(null);
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -71,6 +53,41 @@ export default function GestionUsuarios() {
     }
   };
 
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const response = await api.get('/api/usuarios');
+        const usuariosMapeados = response.data.map(
+          (usuario: UsuarioResponse) => ({
+            id: usuario.id,
+            username: usuario.nombreusuario,
+            fullName: usuario.nombrecompleto,
+            email: usuario.correoelectronico,
+            role: usuario.rol.replace('ROLE_', ''),
+          })
+        );
+        setUsuarios(usuariosMapeados);
+        setLoading(false);
+      } catch (err) {
+        setError('Error al cargar los usuarios');
+        setLoading(false);
+        console.error('Error:', err);
+      }
+    };
+
+    fetchUsuarios();
+  }, []);
+
+  // Agregar un estado de carga
+  if (loading) {
+    return <div>Cargando usuarios...</div>;
+  }
+
+  // Mostrar error si existe
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   interface User {
     id: number;
     username: string;
@@ -80,29 +97,75 @@ export default function GestionUsuarios() {
     role: string;
   }
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const id = usuarios.length + 1;
-    setUsuarios([...usuarios, { id, ...editingUser } as User]);
-    setEditingUser({ id: 0, username: '', fullName: '', email: '', role: '' });
-    setIsAddOpen(false);
-  };
+    try {
+      const userData = {
+        nombreusuario: editingUser?.username,
+        nombrecompleto: editingUser?.fullName,
+        correoelectronico: editingUser?.email,
+        contrasena: editingUser?.password,
+        rol: `ROLE_${editingUser?.role}`, // El rol ya viene en el formato correcto
+      };
 
-  const handleEditUser = (e: React.FormEvent) => {
-    e.preventDefault();
-    setUsuarios(
-      usuarios.map((user) => (user.id === editingUser?.id ? editingUser : user))
-    );
-    setEditingUser(null);
-    setIsEditOpen(false);
-  };
-
-  const handleDeleteUser = () => {
-    if (userToDelete) {
-      setUsuarios(usuarios.filter((user) => user.id !== userToDelete.id));
+      await api.post('/api/usuarios', userData);
+      
+      const newUser = {
+        id: usuarios.length + 1,
+        username: editingUser?.username || '',
+        fullName: editingUser?.fullName || '',
+        email: editingUser?.email || '',
+        role: editingUser?.role || '',
+      };
+      
+      setUsuarios([...usuarios, newUser]);
+      setIsAddOpen(false);
+      setEditingUser(null);
+    } catch (err) {
+      console.error('Error al agregar usuario:', err);
     }
-    setUserToDelete(null);
-    setIsDeleteOpen(false);
+  };
+
+  const handleEditUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const userData = {
+        nombreusuario: editingUser?.username,
+        nombrecompleto: editingUser?.fullName,
+        correoelectronico: editingUser?.email,
+        rol: `ROLE_${editingUser?.role}`, // El rol ya viene en el formato correcto
+      };
+
+      if (editingUser) {
+        await api.put(`/api/usuarios/${editingUser.id}`, userData);
+      }
+      if (editingUser) {
+        setUsuarios(
+          usuarios.map((user) =>
+            user.id === editingUser.id ? editingUser : user
+          )
+        );
+      }
+      setIsEditOpen(false);
+      setEditingUser(null);
+    } catch (err) {
+      console.error('Error al editar usuario:', err);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      await api.delete(`/api/usuarios/${userToDelete.id}`);
+      // Actualizar la lista de usuarios después de eliminar
+      setUsuarios(usuarios.filter((user) => user.id !== userToDelete.id));
+      // Cerrar el diálogo y limpiar el estado
+      setIsDeleteOpen(false);
+      setUserToDelete(null);
+    } catch (err) {
+      console.error('Error al eliminar usuario:', err);
+    }
   };
 
   const openAddDialog = () => {
@@ -138,7 +201,7 @@ export default function GestionUsuarios() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {usuarios.map((usuario) => (
+          {usuarios.map((usuario: User) => (
             <TableRow key={usuario.id}>
               <TableCell>{usuario.id}</TableCell>
               <TableCell>{usuario.username}</TableCell>
@@ -229,9 +292,16 @@ export default function GestionUsuarios() {
                   <SelectValue placeholder="Selecciona un rol" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Usuario">Usuario</SelectItem>
-                  <SelectItem value="Editor">Editor</SelectItem>
-                  <SelectItem value="Administrador">Administrador</SelectItem>
+                  <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
+                  <SelectItem value="ASISTENTE_DE_RECEPCION">
+                    Asistente de Recepción
+                  </SelectItem>
+                  <SelectItem value="ASISTENTE_TECNICO">
+                    Asistente Técnico
+                  </SelectItem>
+                  <SelectItem value="EJECUTIVO_DE_VENTAS">
+                    Ejecutivo de Ventas
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -288,9 +358,16 @@ export default function GestionUsuarios() {
                   <SelectValue placeholder="Selecciona un rol" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Usuario">Usuario</SelectItem>
-                  <SelectItem value="Editor">Editor</SelectItem>
-                  <SelectItem value="Administrador">Administrador</SelectItem>
+                  <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
+                  <SelectItem value="ASISTENTE_DE_RECEPCION">
+                    Asistente de Recepción
+                  </SelectItem>
+                  <SelectItem value="ASISTENTE_TECNICO">
+                    Asistente Técnico
+                  </SelectItem>
+                  <SelectItem value="EJECUTIVO_DE_VENTAS">
+                    Ejecutivo de Ventas
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
