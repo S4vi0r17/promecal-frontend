@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
@@ -53,59 +52,70 @@ export default function GestionUsuarios() {
     },
   ]);
 
-  const [editingUser, setEditingUser] = useState(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (editingUser) {
       setEditingUser({ ...editingUser, [name]: value });
     }
   };
 
-  const handleRoleChange = (value) => {
+  const handleRoleChange = (value: string) => {
     if (editingUser) {
       setEditingUser({ ...editingUser, role: value });
     }
   };
 
-  const handleAddUser = (e) => {
+  interface User {
+    id: number;
+    username: string;
+    fullName: string;
+    email: string;
+    password?: string;
+    role: string;
+  }
+
+  const handleAddUser = (e: React.FormEvent) => {
     e.preventDefault();
     const id = usuarios.length + 1;
-    setUsuarios([...usuarios, { id, ...editingUser }]);
-    setEditingUser(null);
+    setUsuarios([...usuarios, { id, ...editingUser } as User]);
+    setEditingUser({ id: 0, username: '', fullName: '', email: '', role: '' });
     setIsAddOpen(false);
   };
 
-  const handleEditUser = (e) => {
+  const handleEditUser = (e: React.FormEvent) => {
     e.preventDefault();
     setUsuarios(
-      usuarios.map((user) => (user.id === editingUser.id ? editingUser : user))
+      usuarios.map((user) => (user.id === editingUser?.id ? editingUser : user))
     );
     setEditingUser(null);
     setIsEditOpen(false);
   };
 
   const handleDeleteUser = () => {
-    setUsuarios(usuarios.filter((user) => user.id !== userToDelete.id));
+    if (userToDelete) {
+      setUsuarios(usuarios.filter((user) => user.id !== userToDelete.id));
+    }
     setUserToDelete(null);
     setIsDeleteOpen(false);
   };
 
   const openAddDialog = () => {
-    setEditingUser({ username: '', fullName: '', email: '', role: '' });
+    setEditingUser({ id: 0, username: '', fullName: '', email: '', role: '' });
     setIsAddOpen(true);
   };
 
-  const openEditDialog = (user) => {
+  const openEditDialog = (user: User) => {
     setEditingUser({ ...user });
     setIsEditOpen(true);
   };
 
-  const openDeleteDialog = (user) => {
+  const openDeleteDialog = (user: User) => {
     setUserToDelete(user);
     setIsDeleteOpen(true);
   };
@@ -193,6 +203,17 @@ export default function GestionUsuarios() {
                 name="email"
                 type="email"
                 value={editingUser?.email || ''}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={editingUser?.password || ''}
                 onChange={handleInputChange}
                 required
               />

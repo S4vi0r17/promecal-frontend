@@ -35,8 +35,8 @@ export default function Component() {
       const response = await axios.post<{ token: string }>(
         'http://localhost:8080/auth/login',
         {
-          username,
-          password,
+          nombreusuario: username,
+          contrasena: password,
         }
       );
 
