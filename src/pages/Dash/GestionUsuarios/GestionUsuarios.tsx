@@ -184,7 +184,16 @@ export default function GestionUsuarios() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div
+      className="container mx-auto p-4 text-white"
+      style={{
+        backgroundImage: "url('https://i.ibb.co/0fdNvd7/Whats-App-Image-2024-11-12-at-19-49-47-d1e60191.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        height: "100vh" // Ajusta el tamaño según tus necesidades
+      }}
+    >
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Gestión de Usuarios</h1>
         <Button onClick={openAddDialog}>Agregar Usuario</Button>
@@ -215,7 +224,7 @@ export default function GestionUsuarios() {
                     size="icon"
                     onClick={() => openEditDialog(usuario)}
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-4 w-4 text-black" />
                     <span className="sr-only">Modificar</span>
                   </Button>
                   <Button
@@ -223,7 +232,7 @@ export default function GestionUsuarios() {
                     size="icon"
                     onClick={() => openDeleteDialog(usuario)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 text-black" />
                     <span className="sr-only">Eliminar</span>
                   </Button>
                 </div>
