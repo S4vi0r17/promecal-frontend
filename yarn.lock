@@ -349,7 +349,7 @@
 
 "@radix-ui/react-dialog@^1.1.2":
   version "1.1.2"
-  resolved "https://registry.npmjs.org/@radix-ui/react-dialog/-/react-dialog-1.1.2.tgz"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-dialog/-/react-dialog-1.1.2.tgz#d9345575211d6f2d13e209e84aec9a8584b54d6c"
   integrity sha512-Yj4dZtqa2o+kG61fzB0H2qUvmwBA2oyQroGLyNtBj1beo1khoQ3q1a2AO8rrQYjd8256CO9+N8L9tvsS+bnIyA==
   dependencies:
     "@radix-ui/primitive" "1.1.0"
@@ -1847,7 +1847,7 @@ prelude-ls@^1.2.1:
     class-variance-authority "^0.7.0"
     clsx "^2.1.1"
     lucide-react "^0.454.0"
-    promecal-frontend "file:../../AppData/Local/Yarn/Cache/v6/npm-promecal-frontend-0.0.0-41b9c184-9d9e-4cec-bde3-e725d26b7648-1731466093168/node_modules/promecal-frontend"
+    promecal-frontend "file:../../AppData/Local/Yarn/Cache/v6/npm-promecal-frontend-0.0.0-e38814d6-be21-4d87-a230-087474ef70f8-1731783507053/node_modules/promecal-frontend"
     react "^18.3.1"
     react-dom "^18.3.1"
     react-router-dom "^6.27.0"
