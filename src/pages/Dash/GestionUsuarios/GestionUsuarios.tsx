@@ -175,275 +175,276 @@ export default function GestionUsuarios() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('https://imgur.com/Jil1d2S.jpg')",
-      }}
+  className="min-h-screen flex items-center justify-center"
+  style={{
+    backgroundColor: "#1E3A8A", // Fondo azul para cubrir toda la pantalla
+  }}
+>
+  <div className="w-full max-w-[1200px] bg-white bg-opacity-90 rounded-lg p-5 shadow-lg mx-4">
+    <h1 className="text-center text-2xl font-bold text-gray-800">
+      Gestión de Usuarios
+    </h1>
+    <button
+      onClick={openAddDialog}
+      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md mt-4 block mx-auto"
     >
-      <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
-        <h1 className="text-center text-2xl font-bold text-gray-800">
-          Gestión de Usuarios
-        </h1>
-        <button
-          onClick={openAddDialog}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md mt-4 block mx-auto"
-        >
-          Agregar Usuario
-        </button>
-        <div className="overflow-x-auto mt-6">
-          <table className="w-full border-collapse user-table">
-            <thead>
-              <tr className="bg-gray-200 text-gray-800">
-                <th className="border py-2 px-4">ID</th>
-                <th className="border py-2 px-4">Nombre Completo</th>
-                <th className="border py-2 px-4">Usuario</th>
-                <th className="border py-2 px-4">Correo</th>
-                <th className="border py-2 px-4">Rol</th>
-                <th className="border py-2 px-4">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuarios.map((usuario: User, index) => (
-                <tr
-                  key={usuario.id}
-                  className={`${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                  } hover:bg-gray-200`}
-                >
-                  <td className="border py-2 px-4 text-center">{usuario.id}</td>
-                  <td className="border py-2 px-4 text-center">
-                    {usuario.fullName}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    {usuario.username}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    {usuario.email}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    {usuario.role}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    <div className="flex justify-center space-x-2">
-                      <button
-                        onClick={() => openEditDialog(usuario)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md"
-                      >
-                        Modificar
-                      </button>
-                      <button
-                        onClick={() => openDeleteDialog(usuario)}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Diálogo para agregar usuario */}
-        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Agregar Nuevo Usuario</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleAddUser} className="space-y-4">
-              <div>
-                <Label htmlFor="username">Nombre de Usuario</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  value={editingUser?.username || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="fullName">Nombre Completo</Label>
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  value={editingUser?.fullName || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Correo</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={editingUser?.email || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">Contraseña</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={editingUser?.password || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="role">Rol</Label>
-                <Select
-                  onValueChange={handleRoleChange}
-                  value={editingUser?.role || ''}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un rol" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
-                    <SelectItem value="ASISTENTE_DE_RECEPCION">
-                      Asistente de Recepción
-                    </SelectItem>
-                    <SelectItem value="ASISTENTE_TECNICO">
-                      Asistente Técnico
-                    </SelectItem>
-                    <SelectItem value="EJECUTIVO_DE_VENTAS">
-                      Ejecutivo de Ventas
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Guardar Usuario
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo para editar usuario */}
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Modificar Usuario</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleEditUser} className="space-y-4">
-              <div>
-                <Label htmlFor="username">Nombre de Usuario</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  value={editingUser?.username || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="fullName">Nombre Completo</Label>
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  value={editingUser?.fullName || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Correo</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={editingUser?.email || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="role">Rol</Label>
-                <Select
-                  onValueChange={handleRoleChange}
-                  value={editingUser?.role || ''}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un rol" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
-                    <SelectItem value="ASISTENTE_DE_RECEPCION">
-                      Asistente de Recepción
-                    </SelectItem>
-                    <SelectItem value="ASISTENTE_TECNICO">
-                      Asistente Técnico
-                    </SelectItem>
-                    <SelectItem value="EJECUTIVO_DE_VENTAS">
-                      Ejecutivo de Ventas
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Guardar Cambios
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Diálogo para eliminar usuario */}
-        <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirmar Eliminación</DialogTitle>
-            </DialogHeader>
-            <DialogDescription>
-              ¿Estás seguro de que deseas eliminar al siguiente usuario? Esta
-              acción no puede deshacerse.
-            </DialogDescription>
-            {userToDelete && (
-              <div className="space-y-2 mt-4">
-                <p>
-                  <strong>ID:</strong> {userToDelete.id}
-                </p>
-                <p>
-                  <strong>Nombre de Usuario:</strong> {userToDelete.username}
-                </p>
-                <p>
-                  <strong>Nombre Completo:</strong> {userToDelete.fullName}
-                </p>
-                <p>
-                  <strong>Correo:</strong> {userToDelete.email}
-                </p>
-                <p>
-                  <strong>Rol:</strong> {userToDelete.role}
-                </p>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
-                Cancelar
-              </Button>
-              <Button variant="destructive" onClick={handleDeleteUser}>
-                Eliminar
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+      Agregar Usuario
+    </button>
+    <div className="overflow-x-auto mt-6">
+      <table className="w-full border-collapse user-table">
+        <thead>
+          <tr className="bg-gray-200 text-gray-800">
+            <th className="border py-2 px-4">ID</th>
+            <th className="border py-2 px-4">Nombre Completo</th>
+            <th className="border py-2 px-4">Usuario</th>
+            <th className="border py-2 px-4">Correo</th>
+            <th className="border py-2 px-4">Rol</th>
+            <th className="border py-2 px-4">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {usuarios.map((usuario: User, index) => (
+            <tr
+              key={usuario.id}
+              className={`${
+                index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+              } hover:bg-gray-200`}
+            >
+              <td className="border py-2 px-4 text-center">{usuario.id}</td>
+              <td className="border py-2 px-4 text-center">
+                {usuario.fullName}
+              </td>
+              <td className="border py-2 px-4 text-center">
+                {usuario.username}
+              </td>
+              <td className="border py-2 px-4 text-center">
+                {usuario.email}
+              </td>
+              <td className="border py-2 px-4 text-center">
+                {usuario.role}
+              </td>
+              <td className="border py-2 px-4 text-center">
+                <div className="flex justify-center space-x-2">
+                  <button
+                    onClick={() => openEditDialog(usuario)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md"
+                  >
+                    Modificar
+                  </button>
+                  <button
+                    onClick={() => openDeleteDialog(usuario)}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
+
+    {/* Diálogo para agregar usuario */}
+    <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Agregar Nuevo Usuario</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleAddUser} className="space-y-4">
+          <div>
+            <Label htmlFor="username">Nombre de Usuario</Label>
+            <Input
+              id="username"
+              name="username"
+              value={editingUser?.username || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="fullName">Nombre Completo</Label>
+            <Input
+              id="fullName"
+              name="fullName"
+              value={editingUser?.fullName || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Correo</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={editingUser?.email || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="password">Contraseña</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              value={editingUser?.password || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="role">Rol</Label>
+            <Select
+              onValueChange={handleRoleChange}
+              value={editingUser?.role || ''}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona un rol" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
+                <SelectItem value="ASISTENTE_DE_RECEPCION">
+                  Asistente de Recepción
+                </SelectItem>
+                <SelectItem value="ASISTENTE_TECNICO">
+                  Asistente Técnico
+                </SelectItem>
+                <SelectItem value="EJECUTIVO_DE_VENTAS">
+                  Ejecutivo de Ventas
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Guardar Usuario
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    {/* Diálogo para editar usuario */}
+    <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Modificar Usuario</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleEditUser} className="space-y-4">
+          <div>
+            <Label htmlFor="username">Nombre de Usuario</Label>
+            <Input
+              id="username"
+              name="username"
+              value={editingUser?.username || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="fullName">Nombre Completo</Label>
+            <Input
+              id="fullName"
+              name="fullName"
+              value={editingUser?.fullName || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Correo</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={editingUser?.email || ''}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="role">Rol</Label>
+            <Select
+              onValueChange={handleRoleChange}
+              value={editingUser?.role || ''}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona un rol" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ADMINISTRADOR">Administrador</SelectItem>
+                <SelectItem value="ASISTENTE_DE_RECEPCION">
+                  Asistente de Recepción
+                </SelectItem>
+                <SelectItem value="ASISTENTE_TECNICO">
+                  Asistente Técnico
+                </SelectItem>
+                <SelectItem value="EJECUTIVO_DE_VENTAS">
+                  Ejecutivo de Ventas
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Guardar Cambios
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    {/* Diálogo para eliminar usuario */}
+    <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmar Eliminación</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          ¿Estás seguro de que deseas eliminar al siguiente usuario? Esta
+          acción no puede deshacerse.
+        </DialogDescription>
+        {userToDelete && (
+          <div className="space-y-2 mt-4">
+            <p>
+              <strong>ID:</strong> {userToDelete.id}
+            </p>
+            <p>
+              <strong>Nombre de Usuario:</strong> {userToDelete.username}
+            </p>
+            <p>
+              <strong>Nombre Completo:</strong> {userToDelete.fullName}
+            </p>
+            <p>
+              <strong>Correo:</strong> {userToDelete.email}
+            </p>
+            <p>
+              <strong>Rol:</strong> {userToDelete.role}
+            </p>
+          </div>
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={handleDeleteUser}>
+            Eliminar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </div>
+</div>
+
   );
 }
