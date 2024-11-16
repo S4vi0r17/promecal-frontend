@@ -29,7 +29,7 @@ const Dash = () => {
             to="/home/2"
             className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
           >
-            Página 2
+            ORDEN DE TRABAJO
           </Link>
           <button
             onClick={handleLogout}
