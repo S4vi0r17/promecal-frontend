@@ -159,12 +159,9 @@ export default function GestionClientes() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
-      style={{
-        backgroundColor: "#1E3A8A", // Fondo azul para cubrir toda la pantalla
-      }}
+      className="min-h-screen"
     >
-      <div className="w-full max-w-[1200px] bg-white bg-opacity-90 rounded-lg p-5 shadow-lg mx-4">
+      <div className="w-full max-w-[1200px] bg-gray bg-opacity-80 rounded-lg p-5 shadow-lg mx-4">
         <h1 className="text-center text-2xl font-bold text-gray-800">
           Gestión de Clientes
         </h1>
@@ -211,13 +208,13 @@ export default function GestionClientes() {
                     <div className="flex justify-center space-x-2">
                       <button
                         onClick={() => openEditDialog(cliente)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-blue-900 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md"
                       >
                         Modificar
                       </button>
                       <button
                         onClick={() => openDeleteDialog(cliente)}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-red-700 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md"
                       >
                         Eliminar
                       </button>
