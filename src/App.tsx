@@ -11,6 +11,7 @@ import Ejemplo2 from './pages/Dash/ejemplo2/Ejemplo2';
 import ProtectedRoute from './pages/ProtectedRoute';
 import path from 'path';
 import OrdenTrabajo from './pages/Dash/OrdenTrabajo/OrdenesTrabajoPage';
+import InformeDiagnostico from './pages/Dash/InformeDiagnostico/InformeDiagnostico';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="1" element={<GestionUsuarios />} />
           <Route path="2" element={<Ejemplo2 />} />
           <Route path="3" element={<OrdenTrabajo />} />
+          <Route path="4" element={<InformeDiagnostico />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
