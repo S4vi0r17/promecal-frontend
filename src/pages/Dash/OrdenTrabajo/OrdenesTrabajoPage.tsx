@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { FiltrosOrdenTrabajo } from '@/components/FiltrosOrdenTrabajo';
-import { TablaOrdenes } from '@/components/TablaOrdenes';
-import { DetalleOrdenModal } from '@/components/DetalleOrden';
+import { FiltrosOrdenTrabajo } from '@/components/VizualizarOrden/FiltrosOrdenTrabajo';
+import { TablaOrdenes } from '@/components/VizualizarOrden/TablaOrdenes';
+import { DetalleOrdenModal } from '@/components/VizualizarOrden/DetalleOrden';
 import { HistorialModificacion, OrdenTrabajo } from '@/types/ordenTrabajo';
 import api from '@/services/api';
 
