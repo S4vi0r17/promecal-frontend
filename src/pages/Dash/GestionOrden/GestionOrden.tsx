@@ -221,10 +221,8 @@ export default function GestionOrdenesDeTrabajo() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('https://imgur.com/Jil1d2S.jpg')",
-      }}
+      className="min-h-screen bg-cover bg-center bg-gray-100"
+      
     >
       <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
         <h1 className="text-center text-2xl font-bold text-gray-800">
@@ -281,13 +279,13 @@ export default function GestionOrdenesDeTrabajo() {
                     <div className="flex justify-center space-x-2">
                       <button
                         onClick={() => openEditDialog(orden)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-blue-900 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md"
                       >
                         Modificar
                       </button>
                       <button
                         onClick={() => openDeleteDialog(orden)}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-red-700 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md"
                       >
                         Eliminar
                       </button>
@@ -312,16 +310,6 @@ export default function GestionOrdenesDeTrabajo() {
                   id="dni"
                   name="dni"
                   value={editingOrder?.dni || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="codigo">Código</Label>
-                <Input
-                  id="codigo"
-                  name="codigo"
-                  value={editingOrder?.codigo || ''}
                   onChange={handleInputChange}
                   required
                 />
@@ -429,16 +417,6 @@ export default function GestionOrdenesDeTrabajo() {
                   id="dni"
                   name="dni"
                   value={editingOrder?.dni || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="codigo">Código</Label>
-                <Input
-                  id="codigo"
-                  name="codigo"
-                  value={editingOrder?.codigo || ''}
                   onChange={handleInputChange}
                   required
                 />
