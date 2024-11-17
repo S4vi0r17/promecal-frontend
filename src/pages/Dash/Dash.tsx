@@ -20,28 +20,34 @@ const Dash = () => {
         {/* Navegación */}
         <nav>
           <Link
-            to="/home/1"
+            to="/home/admin"
             className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
           >
             ADMINISTRADOR
           </Link>
           <Link
-            to="/home/2"
+            to="/home/gestionar-clientes"
             className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
           >
             Gestionar Clientes
           </Link>
           <Link
-            to="/home/3"
-            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-          >
-            ORDEN DE TRABAJO
-          </Link>
-          <Link
-            to="/home/4"
+            to="/home/visualizar-orden"
             className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
           >
             Visualizar Orden
+          </Link>
+          <Link
+            to="/home/getionar-orden"
+            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+          >
+            Gestionar Orden
+          </Link>
+          <Link
+            to="/home/informe-diagnostico"
+            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+          >
+            Informe de Diagnostico
           </Link>
           <button
             onClick={handleLogout}
