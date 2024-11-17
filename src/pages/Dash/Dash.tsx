@@ -29,7 +29,19 @@ const Dash = () => {
             to="/home/2"
             className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
           >
+            Gestionar Clientes
+          </Link>
+          <Link
+            to="/home/3"
+            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+          >
             ORDEN DE TRABAJO
+          </Link>
+          <Link
+            to="/home/4"
+            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+          >
+            Visualizar Orden
           </Link>
           <button
             onClick={handleLogout}
