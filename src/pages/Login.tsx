@@ -32,7 +32,7 @@ export default function Component() {
     e.preventDefault();
 
     try {
-      const response = await axios.post<{ token: string }>(
+      const response = await axios.post<{ token: string, rol: string }>(
         'http://localhost:8080/auth/login',
         {
           nombreusuario: username,
@@ -42,6 +42,7 @@ export default function Component() {
 
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userRole', response.data.rol);
         navigate('/home');
       }
     } catch (error) {

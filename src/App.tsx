@@ -31,7 +31,7 @@ function App() {
           <Route path="admin" element={<GestionUsuarios />} />
           <Route path="gestionar-clientes" element={<GestionClientes />} />
           <Route path="visualizar-orden" element={<OrdenTrabajo />} />
-          <Route path="getionar-orden" element={<GestionOrden />} />
+          <Route path="gestionar-orden" element={<GestionOrden />} />
           <Route path="informe-diagnostico" element={<InformeDiagnostico />} />
         </Route>
 

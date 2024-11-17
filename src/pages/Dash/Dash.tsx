@@ -1,14 +1,16 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { ROUTES } from '@/constants/routes';
 
 const Dash = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    navigate('/login');
   };
 
   return (
@@ -19,36 +21,17 @@ const Dash = () => {
         <h1 className="text-3xl font-bold text-center">SGRPP</h1>
         {/* Navegación */}
         <nav>
-          <Link
-            to="/home/admin"
-            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-          >
-            ADMINISTRADOR
-          </Link>
-          <Link
-            to="/home/gestionar-clientes"
-            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-          >
-            Gestionar Clientes
-          </Link>
-          <Link
-            to="/home/visualizar-orden"
-            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-          >
-            Visualizar Orden
-          </Link>
-          <Link
-            to="/home/getionar-orden"
-            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-          >
-            Gestionar Orden
-          </Link>
-          <Link
-            to="/home/informe-diagnostico"
-            className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-          >
-            Informe de Diagnostico
-          </Link>
+          {
+            ROUTES.map((route) => (
+              <Link
+                key={route.path}
+                to={route.path}
+                className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+              >
+                {route.name}
+              </Link>
+            ))
+          }
           <button
             onClick={handleLogout}
             className="mt-4 w-full text-left py-2.5 px-4 rounded transition duration-200 hover:bg-red-700"
@@ -63,7 +46,11 @@ const Dash = () => {
         <div className="flex items-center justify-between p-4">
           <h1 className="text-2xl font-bold">Mi Aplicación</h1>
           <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
         {isMenuOpen && (
