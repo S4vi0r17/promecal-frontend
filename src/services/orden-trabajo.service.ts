@@ -45,3 +45,9 @@ export const updateOrdenTrabajo = async (
 export const deleteOrdenTrabajo = async (id: number) => {
   await api.delete(`/api/ordentrabajo/${id}`);
 };
+
+export const getHistorialOrdenTrabajo = async (id: number) => {
+  const { data } = await api.get(`/api/ordentrabajo/${id}/historial`);
+  console.log(data);
+  return data;
+};

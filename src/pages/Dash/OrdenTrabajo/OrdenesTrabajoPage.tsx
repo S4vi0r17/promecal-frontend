@@ -5,13 +5,19 @@ import { FiltrosOrdenTrabajo } from '@/components/VizualizarOrden/FiltrosOrdenTr
 import { TablaOrdenes } from '@/components/VizualizarOrden/TablaOrdenes';
 import { DetalleOrdenModal } from '@/components/VizualizarOrden/DetalleOrden';
 import { HistorialModificacion, OrdenTrabajo } from '@/types/ordenTrabajo';
-import api from '@/services/api';
+import axios from 'axios';
+
+import {
+  getHistorialOrdenTrabajo,
+  getOrdenesTrabajo,
+  getOrdenTrabajoById,
+} from '@/services/orden-trabajo.service';
 
 type DetalleOrden = OrdenTrabajo & {
   documentourl: string;
 };
 
-export default function Component() {
+export default function OrdenTrabajoPage() {
   const [ordenes, setOrdenes] = useState<OrdenTrabajo[]>([]);
   const [ordenesFiltered, setOrdenesFiltered] = useState<OrdenTrabajo[]>([]);
   const [ordenSeleccionada, setOrdenSeleccionada] =
@@ -31,14 +37,16 @@ export default function Component() {
   useEffect(() => {
     const fetchOrdenes = async () => {
       try {
-        const response = await api.get(
-          'http://localhost:8080/api/ordentrabajo'
-        );
-        setOrdenes(response.data);
-        setOrdenesFiltered(response.data);
-        setCargando(false);
-      } catch (error) {
-        setError('Error al cargar las órdenes de trabajo');
+        const data = await getOrdenesTrabajo();
+        setOrdenes(data);
+        setOrdenesFiltered(data);
+      } catch {
+        if (axios.isAxiosError(error) && error.response?.data.message) {
+          setError(error.response.data.message);
+        } else {
+          setError('Error al cargar las órdenes de trabajo');
+        }
+      } finally {
         setCargando(false);
       }
     };
@@ -72,15 +80,21 @@ export default function Component() {
   const handleSeleccionarOrden = async (id: number) => {
     try {
       const [detalleResponse, historialResponse] = await Promise.all([
-        api.get(`http://localhost:8080/api/ordentrabajo/${id}`),
-        api.get(`http://localhost:8080/api/ordentrabajo/${id}/historial`),
+        getOrdenTrabajoById(id),
+        getHistorialOrdenTrabajo(id),
       ]);
 
-      setOrdenSeleccionada(detalleResponse.data);
-      setHistorialModificaciones(historialResponse.data);
+      setOrdenSeleccionada(detalleResponse);
+      setHistorialModificaciones(historialResponse);
       setDetallesAbiertos(true);
-    } catch (error) {
-      setError('Error al cargar los detalles de la orden');
+    } catch {
+      if (axios.isAxiosError(error) && error.response?.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Error al cargar las órdenes de trabajo');
+      }
+    } finally {
+      setCargando(false);
     }
   };
 
