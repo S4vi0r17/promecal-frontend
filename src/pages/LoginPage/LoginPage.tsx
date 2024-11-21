@@ -5,6 +5,7 @@ import axios, { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Card,
   CardContent,
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -30,9 +32,10 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
 
     try {
-      const response = await axios.post<{ token: string, rol: string }>(
+      const response = await axios.post<{ token: string; rol: string }>(
         'http://localhost:8080/auth/login',
         {
           nombreusuario: username,
@@ -48,18 +51,31 @@ export default function LoginPage() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-  
+
         if (axiosError.response) {
-          console.error(
-            'Error en la solicitud:',
-            axiosError.response.status,
-            axiosError.response.data
-          );
+          const { status, message } = axiosError.response.data as {
+            status: number;
+            message: string;
+          };
+
+          if (status === 404) {
+            setErrorMessage(message);
+          } else if (status === 400) {
+            setErrorMessage(message);
+          } else {
+            setErrorMessage(
+              'Ha ocurrido un error inesperado. Inténtelo de nuevo.'
+            );
+          }
+
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
         } else {
-          console.error('Error en el cliente:', axiosError.message);
+          setErrorMessage('No se pudo conectar con el servidor.');
         }
       } else {
-        console.error('Error desconocido:', error);
+        setErrorMessage('Error desconocido.');
       }
     }
   };
@@ -110,10 +126,16 @@ export default function LoginPage() {
               darkMode ? 'text-gray-300' : 'text-gray-500'
             }`}
           >
-            Sistema de Gestíón de Recepción de Pedidos
+            Sistema de Gestión de Recepción de Pedidos
           </p>
         </CardHeader>
         <CardContent>
+          {errorMessage && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label
