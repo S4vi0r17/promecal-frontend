@@ -21,11 +21,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         <Route
-          path="/home"
+          path="/"
           element={
-            <ProtectedRoute>
-              <MainLayout />
-            </ProtectedRoute>
+        <ProtectedRoute>
+          <MainLayout />
+        </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="admin" replace />} />
@@ -37,7 +37,7 @@ function App() {
           <Route path="registrar-pago" element={<RegistrarPagoPage />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </Router>
   );
