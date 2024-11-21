@@ -10,11 +10,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import api from '../../../services/api';
+import api from '../../services/api';
 import axios from 'axios';
 
 
-export default function GestionOrdenesDeTrabajo() {
+export default function GestionOrdenTrabajoPage() {
   const [ordenes, setOrdenes] = useState<OrdenDeTrabajo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);

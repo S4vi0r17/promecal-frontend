@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
 import { AlertCircle, CheckCircle2, Upload } from 'lucide-react'
 
-export default function InformeDiagnostico() {
+export default function InformeDiagnosticoPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [equipoIrreparable, setEquipoIrreparable] = useState(false)
   const { toast } = useToast()

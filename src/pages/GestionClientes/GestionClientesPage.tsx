@@ -11,11 +11,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import api from '../../../services/api';
-import { ClienteResponse } from '../../../interfaces/cliente.interface';
+import api from '../../services/api';
+import { ClienteResponse } from '../../interfaces/cliente.interface';
 import { Edit, Trash2 } from 'lucide-react';
 
-export default function GestionClientes() {
+export default function GestionClientesPage() {
   const [clientes, setClientes] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);

@@ -4,37 +4,37 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import Login from './pages/Login';
-import Dash from './pages/Dash/Dash';
-import GestionUsuarios from './pages/Dash/GestionUsuarios/GestionUsuarios';
-import GestionClientes from './pages/Dash/GestionClientes/GestionClientes.tsx';
-import GestionOrden from './pages/Dash/GestionOrden/GestionOrden';
-import ProtectedRoute from './pages/ProtectedRoute';
-import OrdenTrabajo from './pages/Dash/OrdenTrabajo/OrdenesTrabajoPage';
-import InformeDiagnostico from './pages/Dash/InformeDiagnostico/InformeDiagnostico';
-import RegistrarPago from './pages/Dash/RegistrarPago/RegistrarPago.tsx';
+import LoginPage from '@/pages/LoginPage/LoginPage.tsx';
+import MainLayout from '@/layouts/MainLayout.tsx';
+import GestionUsuariosPage from '@/pages/GestionUsuarios/GestionUsuariosPage';
+import GestionClientesPage from '@/pages/GestionClientes/GestionClientesPage';
+import GestionOrdenTrabajoPage from '@/pages/GestionOrden/GestionOrdenTrabajoPage';
+import ProtectedRoute from '@/pages/ProtectedRoute';
+import OrdenesTrabajoPage from '@/pages/OrdenTrabajo/OrdenesTrabajoPage.tsx';
+import InformeDiagnosticoPage from '@/pages/InformeDiagnostico/InformeDiagnosticoPage';
+import RegistrarPagoPage from '@/pages/RegistrarPago/RegistrarPagoPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginPage />} />
 
         <Route
           path="/home"
           element={
             <ProtectedRoute>
-              <Dash />
+              <MainLayout />
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="admin" replace />} />
-          <Route path="admin" element={<GestionUsuarios />} />
-          <Route path="gestionar-clientes" element={<GestionClientes />} />
-          <Route path="visualizar-orden" element={<OrdenTrabajo />} />
-          <Route path="gestionar-orden" element={<GestionOrden />} />
-          <Route path="informe-diagnostico" element={<InformeDiagnostico />} />
-          <Route path="registrar-pago" element={<RegistrarPago />} />
+          <Route path="admin" element={<GestionUsuariosPage />} />
+          <Route path="gestionar-clientes" element={<GestionClientesPage />} />
+          <Route path="visualizar-orden" element={<OrdenesTrabajoPage />} />
+          <Route path="gestionar-orden" element={<GestionOrdenTrabajoPage />} />
+          <Route path="informe-diagnostico" element={<InformeDiagnosticoPage />} />
+          <Route path="registrar-pago" element={<RegistrarPagoPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

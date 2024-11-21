@@ -12,7 +12,7 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 
-export default function Component() {
+export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [darkMode, setDarkMode] = useState(false);

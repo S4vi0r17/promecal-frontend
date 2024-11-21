@@ -17,11 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import api from '../../../services/api';
-import { UsuarioResponse } from '../../../interfaces/user.interface';
+import api from '../../services/api';
+import { UsuarioResponse } from '../../interfaces/user.interface';
 import { Edit, Trash2 } from 'lucide-react';
 
-export default function GestionUsuarios() {
+export default function GestionUsuariosPage() {
   const [usuarios, setUsuarios] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
