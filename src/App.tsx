@@ -13,6 +13,7 @@ import ProtectedRoute from '@/pages/ProtectedRoute';
 import OrdenesTrabajoPage from '@/pages/OrdenTrabajo/OrdenesTrabajoPage.tsx';
 import InformeDiagnosticoPage from '@/pages/InformeDiagnostico/InformeDiagnosticoPage';
 import RegistrarPagoPage from '@/pages/RegistrarPago/RegistrarPagoPage';
+import GestionarProformaPage from '@/pages/GestionarProforma/GestionarProformaPage';
 
 function App() {
   return (
@@ -21,11 +22,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         <Route
-          path="/"
+          path="/home"
           element={
-        <ProtectedRoute>
-          <MainLayout />
-        </ProtectedRoute>
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="admin" replace />} />
@@ -33,11 +34,12 @@ function App() {
           <Route path="gestionar-clientes" element={<GestionClientesPage />} />
           <Route path="visualizar-orden" element={<OrdenesTrabajoPage />} />
           <Route path="gestionar-orden" element={<GestionOrdenTrabajoPage />} />
-          <Route path="informe-diagnostico" element={<InformeDiagnosticoPage />} />
+          <Route path="informe-diagnostico" element={<InformeDiagnosticoPage />} /> // falta
           <Route path="registrar-pago" element={<RegistrarPagoPage />} />
+          <Route path="gestionar-proforma" element={<GestionarProformaPage />} /> // falta
         </Route>
 
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );

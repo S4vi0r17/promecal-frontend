@@ -22,5 +22,9 @@ export const ROUTES = [
     {
         path: '/home/registrar-pago',
         name: 'Registrar Pago',
+    },
+    {
+        path: '/home/gestionar-proforma',
+        name: 'Gestionar Proforma',
     }
 ];
