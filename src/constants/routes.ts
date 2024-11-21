@@ -18,5 +18,9 @@ export const ROUTES = [
     {
         path: '/home/informe-diagnostico',
         name: 'Informe de Diagnostico',
+    },
+    {
+        path: '/home/registrar-pago',
+        name: 'Registrar Pago',
     }
 ];

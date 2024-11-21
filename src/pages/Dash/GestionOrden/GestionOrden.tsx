@@ -11,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import api from '../../../services/api';
+import axios from 'axios';
 
 
 export default function GestionOrdenesDeTrabajo() {
@@ -134,7 +135,9 @@ export default function GestionOrdenesDeTrabajo() {
       setEditingOrder(null);
       setSelectedFile(null);
     } catch (err) {
-      console.error('Error al agregar la orden de trabajo:', err);
+      if(axios.isAxiosError(err)) {
+        console.error('Error al agregar la orden de trabajo:', err.response?.data);
+      }
     }
   };
 

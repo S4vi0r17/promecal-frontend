@@ -12,6 +12,7 @@ import GestionOrden from './pages/Dash/GestionOrden/GestionOrden';
 import ProtectedRoute from './pages/ProtectedRoute';
 import OrdenTrabajo from './pages/Dash/OrdenTrabajo/OrdenesTrabajoPage';
 import InformeDiagnostico from './pages/Dash/InformeDiagnostico/InformeDiagnostico';
+import RegistrarPago from './pages/Dash/RegistrarPago/RegistrarPago.tsx';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="visualizar-orden" element={<OrdenTrabajo />} />
           <Route path="gestionar-orden" element={<GestionOrden />} />
           <Route path="informe-diagnostico" element={<InformeDiagnostico />} />
+          <Route path="registrar-pago" element={<RegistrarPago />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
