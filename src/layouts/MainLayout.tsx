@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
+import { Toaster } from '@/components/ui/toaster';
 
 const Dash = () => {
   const navigate = useNavigate();
@@ -80,6 +81,7 @@ const Dash = () => {
       {/* Contenido principal */}
       <div className="flex-1 p-10">
         <Outlet />
+        <Toaster />
       </div>
     </div>
   );

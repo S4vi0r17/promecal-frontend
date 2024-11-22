@@ -1,174 +1,358 @@
-import { useState, useRef } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { useToast } from "@/hooks/use-toast"
-import { AlertCircle, CheckCircle2, Upload } from 'lucide-react'
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/hooks/use-toast';
+import api from '@/services/api';
 
-export default function InformeDiagnosticoPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [equipoIrreparable, setEquipoIrreparable] = useState(false)
-  const { toast } = useToast()
-  const fileInputRef = useRef<HTMLInputElement>(null)
+interface OrdenTrabajo {
+  id: number;
+  descripcion: string;
+}
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setIsSubmitting(true)
+interface FormData {
+  id_ordenTrabajo: number | null;
+  numeroSerie: string;
+  estadoActual: string;
+  problemasEncontrados: string;
+  diagnosticoTecnico: string;
+  recomendaciones: string;
+  factibilidadReparacion: 'Alta' | 'Media' | 'Baja';
+  equipoirreparable: boolean;
+  justificacionIrreparable: string;
+  file: File | null;
+}
 
-    const form = event.currentTarget
-    const formData = new FormData(form)
+export default function InformeDiagnosticoForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [ordenesTrabajo, setOrdenesTrabajo] = useState<OrdenTrabajo[]>([]);
+  const [selectedOrden, setSelectedOrden] = useState<OrdenTrabajo | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    id_ordenTrabajo: null,
+    numeroSerie: '',
+    estadoActual: '',
+    problemasEncontrados: '',
+    diagnosticoTecnico: '',
+    recomendaciones: '',
+    factibilidadReparacion: 'Media',
+    equipoirreparable: false,
+    justificacionIrreparable: '',
+    file: null,
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
+    {}
+  );
 
-    const informeData = {
-      id_ordenTrabajo: parseInt(formData.get('id_ordenTrabajo') as string),
-      numeroSerie: formData.get('numeroSerie'),
-      estadoActual: formData.get('estadoActual'),
-      problemasEncontrados: formData.get('problemasEncontrados'),
-      diagnosticoTecnico: formData.get('diagnosticoTecnico'),
-      recomendaciones: formData.get('recomendaciones'),
-      factibilidadReparacion: formData.get('factibilidadReparacion'),
-      equipoirreparable: equipoIrreparable,
-      observacionesAdicionales: formData.get('observacionesAdicionales'),
-      fecha: new Date().toISOString()
-    }
-
-    const dataToSend = new FormData()
-    dataToSend.append('informe', JSON.stringify(informeData))
-    
-    const fileInput = fileInputRef.current
-    if (fileInput && fileInput.files && fileInput.files.length > 0) {
-      dataToSend.append('file', fileInput.files[0])
-    }
-
-    try {
-      const response = await fetch('http://localhost:8080/api/informediagnostico', {
-        method: 'POST',
-        body: dataToSend,
-      })
-
-      if (response.ok) {
+  useEffect(() => {
+    const fetchOrdenesTrabajo = async () => {
+      try {
+        const response = await api.get(
+          'http://localhost:8080/api/ordentrabajo'
+        );
+        setOrdenesTrabajo(response.data);
+      } catch (error) {
+        console.error('Error fetching ordenes de trabajo:', error);
         toast({
-          title: "Informe enviado",
-          description: "El informe de diagnóstico ha sido guardado y enviado correctamente.",
-          duration: 5000,
-        })
-        form.reset()
-        setEquipoIrreparable(false)
-      } else {
-        throw new Error('Error al enviar el informe')
+          title: 'Error',
+          description: 'No se pudieron cargar las órdenes de trabajo.',
+          variant: 'destructive',
+        });
       }
+    };
+
+    fetchOrdenesTrabajo();
+  }, []);
+
+  const onOrdenTrabajoChange = async (id: number) => {
+    try {
+      const response = await api.get(
+        `http://localhost:8080/api/ordentrabajo/${id}`
+      );
+      setSelectedOrden(response.data);
+      setFormData((prev) => ({ ...prev, id_ordenTrabajo: id }));
     } catch (error) {
+      console.error('Error fetching orden de trabajo:', error);
       toast({
-        title: "Error",
-        description: "Hubo un problema al enviar el informe. Por favor, intente nuevamente.",
-        variant: "destructive",
-        duration: 5000,
-      })
-    } finally {
-      setIsSubmitting(false)
+        title: 'Error',
+        description: 'No se pudo cargar la información de la orden de trabajo.',
+        variant: 'destructive',
+      });
     }
-  }
+  };
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, equipoirreparable: checked }));
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setFormData((prev) => ({ ...prev, file }));
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<keyof FormData, string>> = {};
+    if (!formData.id_ordenTrabajo)
+      newErrors.id_ordenTrabajo = 'Seleccione una orden de trabajo';
+    if (!formData.numeroSerie)
+      newErrors.numeroSerie = 'El número de serie es requerido';
+    if (!formData.estadoActual)
+      newErrors.estadoActual = 'El estado actual es requerido';
+    if (!formData.problemasEncontrados)
+      newErrors.problemasEncontrados =
+        'Los problemas encontrados son requeridos';
+    if (!formData.diagnosticoTecnico)
+      newErrors.diagnosticoTecnico = 'El diagnóstico técnico es requerido';
+    if (!formData.recomendaciones)
+      newErrors.recomendaciones = 'Las recomendaciones son requeridas';
+    if (formData.equipoirreparable && !formData.justificacionIrreparable) {
+      newErrors.justificacionIrreparable =
+        'La justificación es requerida para equipos irreparables';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append(
+        'informe',
+        new Blob(
+          [JSON.stringify({ ...formData, fecha: new Date().toISOString() })],
+          {
+            type: 'application/json',
+          }
+        )
+      );
+
+      if (formData.file) {
+        formDataToSend.append('file', formData.file);
+      }
+
+      const response = await api.post(
+        'http://localhost:8080/api/informediagnostico',
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      // Mostrar el toast de confirmación
+      toast({
+        title: 'Informe guardado',
+        description:
+          'El informe de diagnóstico se ha guardado y enviado correctamente.',
+      });
+
+      // Limpiar el formulario
+      setFormData({
+        id_ordenTrabajo: null,
+        numeroSerie: '',
+        estadoActual: '',
+        problemasEncontrados: '',
+        diagnosticoTecnico: '',
+        recomendaciones: '',
+        factibilidadReparacion: 'Media',
+        equipoirreparable: false,
+        justificacionIrreparable: '',
+        file: null,
+      });
+
+      setSelectedOrden(null); // Si quieres limpiar también el estado de la orden seleccionada
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast({
+        title: 'Error',
+        description:
+          'Hubo un problema al guardar el informe. Por favor, intente nuevamente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>Elaborar Informe de Diagnóstico</CardTitle>
-        <CardDescription>Complete los campos para generar el informe de diagnóstico del equipo.</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="id_ordenTrabajo">ID de Orden de Trabajo</Label>
-              <Input id="id_ordenTrabajo" name="id_ordenTrabajo" type="number" placeholder="Ej: 2" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="numeroSerie">Número de Serie</Label>
-              <Input id="numeroSerie" name="numeroSerie" placeholder="Ej: ABC123456" required />
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div>
+        <Label htmlFor="id_ordenTrabajo">Número de Orden de Trabajo</Label>
+        <Select onValueChange={(value) => onOrdenTrabajoChange(Number(value))}>
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una orden de trabajo" />
+          </SelectTrigger>
+          <SelectContent>
+            {ordenesTrabajo.map((orden) => (
+              <SelectItem key={orden.id} value={orden.id.toString()}>
+                {orden.id} - {orden.descripcion}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.id_ordenTrabajo && (
+          <p className="text-red-500 text-sm mt-1">{errors.id_ordenTrabajo}</p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="estadoActual">Estado Actual</Label>
-            <Select name="estadoActual" required>
-              <SelectTrigger id="estadoActual">
-                <SelectValue placeholder="Seleccione el estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="En proceso">En proceso</SelectItem>
-                <SelectItem value="Reparado">Reparado</SelectItem>
-                <SelectItem value="No reparable">No reparable</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <div>
+        <Label htmlFor="numeroSerie">Número de Serie</Label>
+        <Input
+          id="numeroSerie"
+          name="numeroSerie"
+          value={formData.numeroSerie}
+          onChange={handleInputChange}
+          placeholder="Número de serie del equipo"
+        />
+        {errors.numeroSerie && (
+          <p className="text-red-500 text-sm mt-1">{errors.numeroSerie}</p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="problemasEncontrados">Problemas Encontrados</Label>
-            <Textarea id="problemasEncontrados" name="problemasEncontrados" placeholder="Describa los problemas encontrados en el equipo" required />
-          </div>
+      <div>
+        <Label htmlFor="estadoActual">Estado Actual del Equipo</Label>
+        <Textarea
+          id="estadoActual"
+          name="estadoActual"
+          value={formData.estadoActual}
+          onChange={handleInputChange}
+          placeholder="Describa el estado actual del equipo"
+        />
+        {errors.estadoActual && (
+          <p className="text-red-500 text-sm mt-1">{errors.estadoActual}</p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="diagnosticoTecnico">Diagnóstico Técnico</Label>
-            <Textarea id="diagnosticoTecnico" name="diagnosticoTecnico" placeholder="Detalle el diagnóstico técnico del equipo" required />
-          </div>
+      <div>
+        <Label htmlFor="problemasEncontrados">Problemas Encontrados</Label>
+        <Textarea
+          id="problemasEncontrados"
+          name="problemasEncontrados"
+          value={formData.problemasEncontrados}
+          onChange={handleInputChange}
+          placeholder="Detalle los problemas encontrados"
+        />
+        {errors.problemasEncontrados && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.problemasEncontrados}
+          </p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="recomendaciones">Recomendaciones</Label>
-            <Textarea id="recomendaciones" name="recomendaciones" placeholder="Indique las recomendaciones para la reparación o mantenimiento" required />
-          </div>
+      <div>
+        <Label htmlFor="diagnosticoTecnico">Diagnóstico Técnico</Label>
+        <Textarea
+          id="diagnosticoTecnico"
+          name="diagnosticoTecnico"
+          value={formData.diagnosticoTecnico}
+          onChange={handleInputChange}
+          placeholder="Ingrese el diagnóstico técnico"
+        />
+        {errors.diagnosticoTecnico && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.diagnosticoTecnico}
+          </p>
+        )}
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="factibilidadReparacion">Factibilidad de Reparación</Label>
-            <Select name="factibilidadReparacion" required>
-              <SelectTrigger id="factibilidadReparacion">
-                <SelectValue placeholder="Seleccione la factibilidad" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Alta">Alta</SelectItem>
-                <SelectItem value="Media">Media</SelectItem>
-                <SelectItem value="Baja">Baja</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <div>
+        <Label htmlFor="recomendaciones">Recomendaciones</Label>
+        <Textarea
+          id="recomendaciones"
+          name="recomendaciones"
+          value={formData.recomendaciones}
+          onChange={handleInputChange}
+          placeholder="Ingrese las recomendaciones"
+        />
+        {errors.recomendaciones && (
+          <p className="text-red-500 text-sm mt-1">{errors.recomendaciones}</p>
+        )}
+      </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="equipoirreparable"
-              checked={equipoIrreparable}
-              onCheckedChange={setEquipoIrreparable}
-            />
-            <Label htmlFor="equipoirreparable">Equipo Irreparable</Label>
-          </div>
+      <div>
+        <Label htmlFor="factibilidadReparacion">
+          Factibilidad de Reparación
+        </Label>
+        <Select
+          onValueChange={(value) =>
+            handleSelectChange('factibilidadReparacion', value)
+          }
+          defaultValue={formData.factibilidadReparacion}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione la factibilidad" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Alta">Alta</SelectItem>
+            <SelectItem value="Media">Media</SelectItem>
+            <SelectItem value="Baja">Baja</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="observacionesAdicionales">Observaciones Adicionales</Label>
-            <Textarea id="observacionesAdicionales" name="observacionesAdicionales" placeholder="Agregue cualquier observación adicional relevante" />
-          </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="equipoirreparable"
+          checked={formData.equipoirreparable}
+          onCheckedChange={handleCheckboxChange}
+        />
+        <Label htmlFor="equipoirreparable">Equipo Irreparable</Label>
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="file">Adjuntar Informe PDF</Label>
-            <Input id="file" name="file" type="file" accept=".pdf" ref={fileInputRef} required />
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <AlertCircle className="mr-2 h-4 w-4 animate-spin" />
-                Enviando...
-              </>
-            ) : (
-              <>
-                <Upload className="mr-2 h-4 w-4" />
-                Guardar y Enviar
-              </>
-            )}
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
-  )
+      {formData.equipoirreparable && (
+        <div>
+          <Label htmlFor="justificacionIrreparable">
+            Justificación Técnica Detallada
+          </Label>
+          <Textarea
+            id="justificacionIrreparable"
+            name="justificacionIrreparable"
+            value={formData.justificacionIrreparable}
+            onChange={handleInputChange}
+            placeholder="Ingrese la justificación técnica detallada"
+          />
+          {errors.justificacionIrreparable && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.justificacionIrreparable}
+            </p>
+          )}
+        </div>
+      )}
+
+      <div>
+        <Label htmlFor="file">Adjuntar Archivo</Label>
+        <Input id="file" type="file" onChange={handleFileChange} />
+      </div>
+
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? 'Guardando...' : 'Guardar y Enviar'}
+      </Button>
+    </form>
+  );
 }
