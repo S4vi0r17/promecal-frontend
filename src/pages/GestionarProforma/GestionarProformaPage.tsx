@@ -21,7 +21,7 @@ export default function GestionProformasPage() {
     tiempoEstimadoEntrega: string;
     condicionesContratacion: string;
     estadoPago: string;
-    fecha: string;
+    fecha: string; // Fecha con formato ISO incluyendo hora
   }
 
   const [proformas, setProformas] = useState<Proforma[]>([]);
@@ -177,6 +177,23 @@ export default function GestionProformasPage() {
     setIsDeleteOpen(true);
   };
 
+  // Función para formatear la fecha para mostrarla en el input y en la tabla
+  const formatFecha = (fecha: string) => {
+    const date = new Date(fecha);
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // Función para formatear la fecha para mostrarla en la tabla de manera legible
+  const formatFechaDisplay = (fecha: string) => {
+    const date = new Date(fecha);
+    return date.toLocaleString();
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -239,7 +256,7 @@ export default function GestionProformasPage() {
                     {proforma.estadoPago}
                   </td>
                   <td className="border py-2 px-4 text-center">
-                    {proforma.fecha}
+                    {formatFechaDisplay(proforma.fecha)}
                   </td>
                   <td className="border py-2 px-4 text-center">
                     <div className="flex justify-center space-x-2">
@@ -298,7 +315,8 @@ export default function GestionProformasPage() {
                   id="precioServicio"
                   name="precioServicio"
                   type="number"
-                  value={editingProforma?.precioServicio || 0}
+                  step="0.01"
+                  value={editingProforma?.precioServicio || ''}
                   onChange={handleInputChange}
                   required
                 />
@@ -338,12 +356,16 @@ export default function GestionProformasPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="fecha">Fecha</Label>
+                <Label htmlFor="fecha">Fecha y Hora</Label>
                 <Input
                   id="fecha"
                   name="fecha"
-                  type="date"
-                  value={editingProforma?.fecha || ''}
+                  type="datetime-local"
+                  value={
+                    editingProforma?.fecha
+                      ? formatFecha(editingProforma.fecha)
+                      : ''
+                  }
                   onChange={handleInputChange}
                   required
                 />
@@ -395,7 +417,8 @@ export default function GestionProformasPage() {
                   id="precioServicio"
                   name="precioServicio"
                   type="number"
-                  value={editingProforma?.precioServicio || 0}
+                  step="0.01"
+                  value={editingProforma?.precioServicio || ''}
                   onChange={handleInputChange}
                   required
                 />
@@ -435,12 +458,16 @@ export default function GestionProformasPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="fecha">Fecha</Label>
+                <Label htmlFor="fecha">Fecha y Hora</Label>
                 <Input
                   id="fecha"
                   name="fecha"
-                  type="date"
-                  value={editingProforma?.fecha || ''}
+                  type="datetime-local"
+                  value={
+                    editingProforma?.fecha
+                      ? formatFecha(editingProforma.fecha)
+                      : ''
+                  }
                   onChange={handleInputChange}
                   required
                 />
@@ -496,7 +523,8 @@ export default function GestionProformasPage() {
                   <strong>Estado Pago:</strong> {proformaToDelete.estadoPago}
                 </p>
                 <p>
-                  <strong>Fecha:</strong> {proformaToDelete.fecha}
+                  <strong>Fecha:</strong>{' '}
+                  {formatFechaDisplay(proformaToDelete.fecha)}
                 </p>
               </div>
             )}
