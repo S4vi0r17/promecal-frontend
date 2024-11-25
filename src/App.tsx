@@ -9,11 +9,24 @@ import MainLayout from '@/layouts/MainLayout.tsx';
 import ProtectedRoute from '@/pages/ProtectedRoute';
 import { getUserRole } from '@/helpers/auth';
 import { roleRouteMap } from './constants/roleRouteMap';
+import { useEffect, useState } from 'react';
+import GestionarProformaPage from './pages/GestionarProforma/GestionarProformaPage';
+import GestionClientesPage from './pages/GestionClientes/GestionClientesPage';
+import GestionOrdenTrabajoPage from './pages/GestionOrden/GestionOrdenTrabajoPage';
+import GestionUsuariosPage from './pages/GestionUsuarios/GestionUsuariosPage';
+import InformeDiagnosticoPage from './pages/InformeDiagnostico/InformeDiagnosticoPage';
+import OrdenesTrabajoPage from './pages/OrdenTrabajo/OrdenesTrabajoPage';
+import RegistrarPagoPage from './pages/RegistrarPago/RegistrarPagoPage';
 
 function App() {
-  const userRole = getUserRole();
 
-  const allowedRoutes = userRole ? roleRouteMap[userRole] : [];
+  const [allowedRoutes, setAllowedRoutes] = useState<{ path: string; element: JSX.Element; }[]>([]);
+
+  useEffect(() => {
+    const userRole = getUserRole();
+
+    setAllowedRoutes(userRole ? roleRouteMap[userRole] : []);
+  }, []);
 
   return (
     <Router>
@@ -29,12 +42,15 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {allowedRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
+          <Route path="admin" element={<GestionUsuariosPage />} />
+          <Route path="gestionar-clientes" element={<GestionClientesPage />} />
+          <Route path="visualizar-orden" element={<OrdenesTrabajoPage />} />
+          <Route path="gestionar-orden" element={<GestionOrdenTrabajoPage />} />
+          <Route path="informe-diagnostico" element={<InformeDiagnosticoPage />} />
+          <Route path="registrar-pago" element={<RegistrarPagoPage />} />
+          <Route path="gestionar-proforma" element={<GestionarProformaPage />} />
         </Route>
 
-        {/* <Route path="*" element={<Navigate to="/login" />} /> */}
       </Routes>
     </Router>
   );

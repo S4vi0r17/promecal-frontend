@@ -1,27 +1,40 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 import { Toaster } from '@/components/ui/toaster';
 import { roleRouteMap } from '@/constants/roleRouteMap';
 
+interface Route {
+  path: string;
+  name: string;
+}
+
 const Dash = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [allowedRoutes, setAllowedRoutes] = useState<Route[]>([]);
 
-  const userRole = localStorage.getItem('userRole');
-
-  const allowPaths = userRole ? roleRouteMap[userRole].map((route) => route.path) : [];
-
-  const allowedRoutes = ROUTES.filter((route) => allowPaths.includes(route.path));
-
-  // console.log(allowedRoutes);
+  useEffect(() => {
+    const userRole = localStorage.getItem('userRole');
+    if (userRole) {
+      const allowPaths = roleRouteMap[userRole]?.map((route) => route.path) || [];
+      const routes = ROUTES.filter((route) => allowPaths.includes(route.path));
+      setAllowedRoutes(routes);
+    } else {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
     navigate('/login');
   };
+
+  if (!allowedRoutes.length) {
+    return <div>Cargando rutas...</div>; // Muestra un indicador de carga mientras no hay rutas
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -31,17 +44,15 @@ const Dash = () => {
         <h1 className="text-3xl font-bold text-center">SGRPP</h1>
         {/* Navegación */}
         <nav>
-          {
-            allowedRoutes.map((route) => (
-              <Link
-                key={route.path}
-                to={route.path}
-                className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-              >
-                {route.name}
-              </Link>
-            ))
-          }
+          {allowedRoutes.map((route) => (
+            <Link
+              key={route.path}
+              to={route.path}
+              className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+            >
+              {route.name}
+            </Link>
+          ))}
           <button
             onClick={handleLogout}
             className="mt-4 w-full text-left py-2.5 px-4 rounded transition duration-200 hover:bg-red-700"
