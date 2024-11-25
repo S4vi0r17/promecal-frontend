@@ -11,9 +11,11 @@ const Dash = () => {
 
   const userRole = localStorage.getItem('userRole');
 
-  const allowPaths = userRole ? roleRouteMap[userRole] : [];
+  const allowPaths = userRole ? roleRouteMap[userRole].map((route) => route.path) : [];
 
   const allowedRoutes = ROUTES.filter((route) => allowPaths.includes(route.path));
+
+  // console.log(allowedRoutes);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
