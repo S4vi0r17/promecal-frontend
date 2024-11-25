@@ -3,10 +3,17 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 import { Toaster } from '@/components/ui/toaster';
+import { roleRouteMap } from '@/constants/roleRouteMap';
 
 const Dash = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const userRole = localStorage.getItem('userRole');
+
+  const allowPaths = userRole ? roleRouteMap[userRole] : [];
+
+  const allowedRoutes = ROUTES.filter((route) => allowPaths.includes(route.path));
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -23,7 +30,7 @@ const Dash = () => {
         {/* Navegación */}
         <nav>
           {
-            ROUTES.map((route) => (
+            allowedRoutes.map((route) => (
               <Link
                 key={route.path}
                 to={route.path}
