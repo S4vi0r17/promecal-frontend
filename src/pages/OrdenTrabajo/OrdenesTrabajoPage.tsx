@@ -6,6 +6,7 @@ import { TablaOrdenes } from '@/components/VizualizarOrden/TablaOrdenes';
 import { DetalleOrdenModal } from '@/components/VizualizarOrden/DetalleOrden';
 import { HistorialModificacion, OrdenTrabajo } from '@/types/ordenTrabajo';
 import axios from 'axios';
+// import { generarOrdenesPrueba } from '@/pages/OrdenTrabajo/mockData';
 
 import {
   getHistorialOrdenTrabajo,
@@ -38,6 +39,7 @@ export default function OrdenTrabajoPage() {
     const fetchOrdenes = async () => {
       try {
         const data = await getOrdenesTrabajo();
+        // const data = generarOrdenesPrueba(1000);
         setOrdenes(data);
         setOrdenesFiltered(data);
       } catch {
