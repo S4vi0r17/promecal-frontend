@@ -1,4 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import api from '../../services/api';
+import { OrdenTrabajoListaDTO } from '@/interfaces/orden-trabajo.interface';
+import { getOrdenesTrabajo } from '@/services/orden-trabajo.service';
+import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,12 +15,23 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import api from '../../services/api';
-import axios from 'axios';
-import Loader from '@/components/Loader';
-import { OrdenTrabajoListaDTO } from '@/interfaces/orden-trabajo.interface';
-import { getOrdenesTrabajo } from '@/services/orden-trabajo.service';
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 
 export default function GestionOrdenTrabajoPage() {
   const [ordenes, setOrdenes] = useState<OrdenDeTrabajo[]>([]);
@@ -29,6 +45,48 @@ export default function GestionOrdenTrabajoPage() {
   const [orderToDelete, setOrderToDelete] = useState<OrdenDeTrabajo | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  const totalPages = Math.ceil(ordenes.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = ordenes.slice(startIndex, endIndex);
+
+  const getVisiblePages = useMemo(() => {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+
+    range.push(1);
+
+    for (let i = currentPage - delta; i <= currentPage + delta; i++) {
+      if (i > 1 && i < totalPages) {
+        range.push(i);
+      }
+    }
+
+    if (totalPages > 1) {
+      range.push(totalPages);
+    }
+
+    let prev = 0;
+    for (const i of range) {
+      if (prev + 1 !== i) {
+        rangeWithDots.push('...');
+      }
+      rangeWithDots.push(i);
+      prev = i;
+    }
+
+    return rangeWithDots;
+  }, [currentPage, totalPages]);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   interface OrdenDeTrabajo {
     id: number;
@@ -67,7 +125,8 @@ export default function GestionOrdenTrabajoPage() {
     const fetchOrdenes = async () => {
       try {
         const data = await getOrdenesTrabajo();
-        const ordenesMapeadas = data.map((orden: OrdenTrabajoListaDTO) => ({ // Any
+        const ordenesMapeadas = data.map((orden: OrdenTrabajoListaDTO) => ({
+          // Any
           id: orden.id,
           dni: orden.dni,
           codigo: orden.codigo,
@@ -118,7 +177,10 @@ export default function GestionOrdenTrabajoPage() {
       };
 
       const formData = new FormData();
-      formData.append('orden', new Blob([JSON.stringify(orderData)], { type: 'application/json' }));
+      formData.append(
+        'orden',
+        new Blob([JSON.stringify(orderData)], { type: 'application/json' })
+      );
       if (selectedFile) {
         formData.append('file', selectedFile);
       }
@@ -138,8 +200,11 @@ export default function GestionOrdenTrabajoPage() {
       setEditingOrder(null);
       setSelectedFile(null);
     } catch (err) {
-      if(axios.isAxiosError(err)) {
-        console.error('Error al agregar la orden de trabajo:', err.response?.data);
+      if (axios.isAxiosError(err)) {
+        console.error(
+          'Error al agregar la orden de trabajo:',
+          err.response?.data
+        );
       }
     }
   };
@@ -160,7 +225,10 @@ export default function GestionOrdenTrabajoPage() {
       };
 
       const formData = new FormData();
-      formData.append('orden', new Blob([JSON.stringify(orderData)], { type: 'application/json' }));
+      formData.append(
+        'orden',
+        new Blob([JSON.stringify(orderData)], { type: 'application/json' })
+      );
       if (selectedFile) {
         formData.append('file', selectedFile);
       }
@@ -226,10 +294,7 @@ export default function GestionOrdenTrabajoPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex justify-center items-center bg-gray-100"
-      
-    >
+    <div className="min-h-screen flex justify-center items-center bg-gray-100">
       <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
         <h1 className="text-center text-2xl font-bold text-gray-800">
           Gestión de Órdenes de Trabajo
@@ -240,67 +305,97 @@ export default function GestionOrdenTrabajoPage() {
         >
           Agregar Orden de Trabajo
         </button>
-        <div className="overflow-x-auto mt-6">
-          <table className="w-full border-collapse user-table">
-            <thead>
-              <tr className="bg-gray-200 text-gray-800">
-                <th className="border py-2 px-4">ID</th>
-                <th className="border py-2 px-4">DNI del Cliente</th>
-                <th className="border py-2 px-4">Código</th>
-                <th className="border py-2 px-4">Fecha</th>
-                <th className="border py-2 px-4">Descripción</th>
-                <th className="border py-2 px-4">Modelo</th>
-                <th className="border py-2 px-4">Marca</th>
-                <th className="border py-2 px-4">Rajaduras</th>
-                <th className="border py-2 px-4">Manchas</th>
-                <th className="border py-2 px-4">Golpes</th>
-                <th className="border py-2 px-4">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ordenes.map((orden: OrdenDeTrabajo, index) => (
-                <tr
+        <div className="overflow-x-auto mt-6 flex flex-col justify-between gap-5 min-h-72">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>DNI del Cliente</TableHead>
+                <TableHead>Código</TableHead>
+                <TableHead>Fecha</TableHead>
+                <TableHead>Descripción</TableHead>
+                <TableHead>Modelo</TableHead>
+                <TableHead>Marca</TableHead>
+                <TableHead>Rajaduras</TableHead>
+                <TableHead>Manchas</TableHead>
+                <TableHead>Golpes</TableHead>
+                <TableHead>Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentItems.map((orden: OrdenDeTrabajo, index) => (
+                <TableRow
                   key={orden.id}
-                  className={`${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                  } hover:bg-gray-200`}
+                  className={index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}
                 >
-                  <td className="border py-2 px-4 text-center">{orden.id}</td>
-                  <td className="border py-2 px-4 text-center">{orden.dni}</td>
-                  <td className="border py-2 px-4 text-center">{orden.codigo}</td>
-                  <td className="border py-2 px-4 text-center">{orden.fecha}</td>
-                  <td className="border py-2 px-4 text-center">{orden.descripcion}</td>
-                  <td className="border py-2 px-4 text-center">{orden.modelo}</td>
-                  <td className="border py-2 px-4 text-center">{orden.marca}</td>
-                  <td className="border py-2 px-4 text-center">
-                    {orden.rajaduras ? 'Sí' : 'No'}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    {orden.manchas ? 'Sí' : 'No'}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    {orden.golpes ? 'Sí' : 'No'}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  <TableCell>{orden.id}</TableCell>
+                  <TableCell>{orden.dni}</TableCell>
+                  <TableCell>{orden.codigo}</TableCell>
+                  <TableCell>{orden.fecha}</TableCell>
+                  <TableCell>{orden.descripcion}</TableCell>
+                  <TableCell>{orden.modelo}</TableCell>
+                  <TableCell>{orden.marca}</TableCell>
+                  <TableCell>{orden.rajaduras ? 'Sí' : 'No'}</TableCell>
+                  <TableCell>{orden.manchas ? 'Sí' : 'No'}</TableCell>
+                  <TableCell>{orden.golpes ? 'Sí' : 'No'}</TableCell>
+                  <TableCell>
                     <div className="flex justify-center space-x-2">
-                      <button
-                        onClick={() => openEditDialog(orden)}
-                        className="bg-blue-900 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md"
-                      >
+                      <Button onClick={() => openEditDialog(orden)}>
                         Modificar
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => openDeleteDialog(orden)}
-                        className="bg-red-700 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md"
+                        variant="destructive"
                       >
                         Eliminar
-                      </button>
+                      </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={
+                    currentPage === 1
+                      ? 'pointer-events-none opacity-50'
+                      : 'cursor-pointer'
+                  }
+                />
+              </PaginationItem>
+
+              {getVisiblePages.map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === '...' ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      onClick={() => handlePageChange(page as number)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={
+                    currentPage === totalPages
+                      ? 'pointer-events-none opacity-50'
+                      : 'cursor-pointer'
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
 
         {/* Diálogo para agregar orden de trabajo */}
@@ -524,7 +619,8 @@ export default function GestionOrdenTrabajoPage() {
               <DialogTitle>Confirmar Eliminación</DialogTitle>
             </DialogHeader>
             <DialogDescription>
-              ¿Estás seguro de que deseas eliminar la siguiente orden de trabajo? Esta acción no puede deshacerse.
+              ¿Estás seguro de que deseas eliminar la siguiente orden de
+              trabajo? Esta acción no puede deshacerse.
             </DialogDescription>
             {orderToDelete && (
               <div className="space-y-2 mt-4">
