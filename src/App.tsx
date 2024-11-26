@@ -17,10 +17,12 @@ import GestionUsuariosPage from './pages/GestionUsuarios/GestionUsuariosPage';
 import InformeDiagnosticoPage from './pages/InformeDiagnostico/InformeDiagnosticoPage';
 import OrdenesTrabajoPage from './pages/OrdenTrabajo/OrdenesTrabajoPage';
 import RegistrarPagoPage from './pages/RegistrarPago/RegistrarPagoPage';
+import SinNombre from './pages/SinNombre/SinNombre';
 
 function App() {
 
-  const [allowedRoutes, setAllowedRoutes] = useState<{ path: string; element: JSX.Element; }[]>([]);
+  // Esta webada no sirve jaaa 🦎
+  const [, setAllowedRoutes] = useState<{ path: string; element: JSX.Element; }[]>([]);
 
   useEffect(() => {
     const userRole = getUserRole();
@@ -42,6 +44,7 @@ function App() {
             </ProtectedRoute>
           }
         >
+          <Route path="/home" element={<SinNombre />} />
           <Route path="admin" element={<GestionUsuariosPage />} />
           <Route path="gestionar-clientes" element={<GestionClientesPage />} />
           <Route path="visualizar-orden" element={<OrdenesTrabajoPage />} />
