@@ -98,8 +98,7 @@ const Dash = () => {
         )}
       </div>
 
-      {/* Contenido principal */}
-      <div className="flex-1 p-10">
+      <div className="flex-1">
         <Outlet />
         <Toaster />
       </div>

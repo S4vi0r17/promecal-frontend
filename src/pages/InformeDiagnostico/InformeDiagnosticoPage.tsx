@@ -35,7 +35,7 @@ interface FormData {
 export default function InformeDiagnosticoForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [ordenesTrabajo, setOrdenesTrabajo] = useState<OrdenTrabajo[]>([]);
-  const [selectedOrden, setSelectedOrden] = useState<OrdenTrabajo | null>(null);
+  const [, setSelectedOrden] = useState<OrdenTrabajo | null>(null);
   const [formData, setFormData] = useState<FormData>({
     id_ordenTrabajo: null,
     numeroSerie: '',
@@ -201,158 +201,166 @@ export default function InformeDiagnosticoForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      <div>
-        <Label htmlFor="id_ordenTrabajo">Número de Orden de Trabajo</Label>
-        <Select onValueChange={(value) => onOrdenTrabajoChange(Number(value))}>
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione una orden de trabajo" />
-          </SelectTrigger>
-          <SelectContent>
-            {ordenesTrabajo.map((orden) => (
-              <SelectItem key={orden.id} value={orden.id.toString()}>
-                {orden.id} - {orden.descripcion}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.id_ordenTrabajo && (
-          <p className="text-red-500 text-sm mt-1">{errors.id_ordenTrabajo}</p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="numeroSerie">Número de Serie</Label>
-        <Input
-          id="numeroSerie"
-          name="numeroSerie"
-          value={formData.numeroSerie}
-          onChange={handleInputChange}
-          placeholder="Número de serie del equipo"
-        />
-        {errors.numeroSerie && (
-          <p className="text-red-500 text-sm mt-1">{errors.numeroSerie}</p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="estadoActual">Estado Actual del Equipo</Label>
-        <Textarea
-          id="estadoActual"
-          name="estadoActual"
-          value={formData.estadoActual}
-          onChange={handleInputChange}
-          placeholder="Describa el estado actual del equipo"
-        />
-        {errors.estadoActual && (
-          <p className="text-red-500 text-sm mt-1">{errors.estadoActual}</p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="problemasEncontrados">Problemas Encontrados</Label>
-        <Textarea
-          id="problemasEncontrados"
-          name="problemasEncontrados"
-          value={formData.problemasEncontrados}
-          onChange={handleInputChange}
-          placeholder="Detalle los problemas encontrados"
-        />
-        {errors.problemasEncontrados && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.problemasEncontrados}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="diagnosticoTecnico">Diagnóstico Técnico</Label>
-        <Textarea
-          id="diagnosticoTecnico"
-          name="diagnosticoTecnico"
-          value={formData.diagnosticoTecnico}
-          onChange={handleInputChange}
-          placeholder="Ingrese el diagnóstico técnico"
-        />
-        {errors.diagnosticoTecnico && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.diagnosticoTecnico}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="recomendaciones">Recomendaciones</Label>
-        <Textarea
-          id="recomendaciones"
-          name="recomendaciones"
-          value={formData.recomendaciones}
-          onChange={handleInputChange}
-          placeholder="Ingrese las recomendaciones"
-        />
-        {errors.recomendaciones && (
-          <p className="text-red-500 text-sm mt-1">{errors.recomendaciones}</p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="factibilidadReparacion">
-          Factibilidad de Reparación
-        </Label>
-        <Select
-          onValueChange={(value) =>
-            handleSelectChange('factibilidadReparacion', value)
-          }
-          defaultValue={formData.factibilidadReparacion}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione la factibilidad" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Alta">Alta</SelectItem>
-            <SelectItem value="Media">Media</SelectItem>
-            <SelectItem value="Baja">Baja</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="equipoirreparable"
-          checked={formData.equipoirreparable}
-          onCheckedChange={handleCheckboxChange}
-        />
-        <Label htmlFor="equipoirreparable">Equipo Irreparable</Label>
-      </div>
-
-      {formData.equipoirreparable && (
+    <div className='p-10'>
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
-          <Label htmlFor="justificacionIrreparable">
-            Justificación Técnica Detallada
-          </Label>
-          <Textarea
-            id="justificacionIrreparable"
-            name="justificacionIrreparable"
-            value={formData.justificacionIrreparable}
-            onChange={handleInputChange}
-            placeholder="Ingrese la justificación técnica detallada"
-          />
-          {errors.justificacionIrreparable && (
+          <Label htmlFor="id_ordenTrabajo">Número de Orden de Trabajo</Label>
+          <Select
+            onValueChange={(value) => onOrdenTrabajoChange(Number(value))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione una orden de trabajo" />
+            </SelectTrigger>
+            <SelectContent>
+              {ordenesTrabajo.map((orden) => (
+                <SelectItem key={orden.id} value={orden.id.toString()}>
+                  {orden.id} - {orden.descripcion}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.id_ordenTrabajo && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.justificacionIrreparable}
+              {errors.id_ordenTrabajo}
             </p>
           )}
         </div>
-      )}
 
-      <div>
-        <Label htmlFor="file">Adjuntar Archivo</Label>
-        <Input id="file" type="file" onChange={handleFileChange} />
-      </div>
+        <div>
+          <Label htmlFor="numeroSerie">Número de Serie</Label>
+          <Input
+            id="numeroSerie"
+            name="numeroSerie"
+            value={formData.numeroSerie}
+            onChange={handleInputChange}
+            placeholder="Número de serie del equipo"
+          />
+          {errors.numeroSerie && (
+            <p className="text-red-500 text-sm mt-1">{errors.numeroSerie}</p>
+          )}
+        </div>
 
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? 'Guardando...' : 'Guardar y Enviar'}
-      </Button>
-    </form>
+        <div>
+          <Label htmlFor="estadoActual">Estado Actual del Equipo</Label>
+          <Textarea
+            id="estadoActual"
+            name="estadoActual"
+            value={formData.estadoActual}
+            onChange={handleInputChange}
+            placeholder="Describa el estado actual del equipo"
+          />
+          {errors.estadoActual && (
+            <p className="text-red-500 text-sm mt-1">{errors.estadoActual}</p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="problemasEncontrados">Problemas Encontrados</Label>
+          <Textarea
+            id="problemasEncontrados"
+            name="problemasEncontrados"
+            value={formData.problemasEncontrados}
+            onChange={handleInputChange}
+            placeholder="Detalle los problemas encontrados"
+          />
+          {errors.problemasEncontrados && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.problemasEncontrados}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="diagnosticoTecnico">Diagnóstico Técnico</Label>
+          <Textarea
+            id="diagnosticoTecnico"
+            name="diagnosticoTecnico"
+            value={formData.diagnosticoTecnico}
+            onChange={handleInputChange}
+            placeholder="Ingrese el diagnóstico técnico"
+          />
+          {errors.diagnosticoTecnico && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.diagnosticoTecnico}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="recomendaciones">Recomendaciones</Label>
+          <Textarea
+            id="recomendaciones"
+            name="recomendaciones"
+            value={formData.recomendaciones}
+            onChange={handleInputChange}
+            placeholder="Ingrese las recomendaciones"
+          />
+          {errors.recomendaciones && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.recomendaciones}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="factibilidadReparacion">
+            Factibilidad de Reparación
+          </Label>
+          <Select
+            onValueChange={(value) =>
+              handleSelectChange('factibilidadReparacion', value)
+            }
+            defaultValue={formData.factibilidadReparacion}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione la factibilidad" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Alta">Alta</SelectItem>
+              <SelectItem value="Media">Media</SelectItem>
+              <SelectItem value="Baja">Baja</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="equipoirreparable"
+            checked={formData.equipoirreparable}
+            onCheckedChange={handleCheckboxChange}
+          />
+          <Label htmlFor="equipoirreparable">Equipo Irreparable</Label>
+        </div>
+
+        {formData.equipoirreparable && (
+          <div>
+            <Label htmlFor="justificacionIrreparable">
+              Justificación Técnica Detallada
+            </Label>
+            <Textarea
+              id="justificacionIrreparable"
+              name="justificacionIrreparable"
+              value={formData.justificacionIrreparable}
+              onChange={handleInputChange}
+              placeholder="Ingrese la justificación técnica detallada"
+            />
+            {errors.justificacionIrreparable && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.justificacionIrreparable}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div>
+          <Label htmlFor="file">Adjuntar Archivo</Label>
+          <Input id="file" type="file" onChange={handleFileChange} />
+        </div>
+
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Guardando...' : 'Guardar y Enviar'}
+        </Button>
+      </form>
+    </div>
   );
 }

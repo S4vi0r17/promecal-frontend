@@ -11,30 +11,26 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import api from '../../services/api';
+import Loader from '@/components/Loader';
+import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+import {
+  actualizarProformaServicio,
+  eliminarProformaServicio,
+  obtenerTodosLasProformas,
+} from '@/services/proforma-servicio.service';
 
 export default function GestionProformasPage() {
-  interface Proforma {
-    id: number;
-    codigo_ordentrabajo: string;
-    detalleServicio: string;
-    precioServicio: number;
-    tiempoEstimadoEntrega: string;
-    condicionesContratacion: string;
-    estadoPago: string;
-    fecha: string; // Fecha con formato ISO incluyendo hora
-  }
-
-  const [proformas, setProformas] = useState<Proforma[]>([]);
+  const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
 
-  const [editingProforma, setEditingProforma] = useState<Proforma | null>(null);
+  const [editingProforma, setEditingProforma] =
+    useState<ProformaServicioListaDTO | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [proformaToDelete, setProformaToDelete] = useState<Proforma | null>(
-    null
-  );
+  const [proformaToDelete, setProformaToDelete] =
+    useState<ProformaServicioListaDTO | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -49,17 +45,19 @@ export default function GestionProformasPage() {
   useEffect(() => {
     const fetchProformas = async () => {
       try {
-        const response = await api.get('/api/proformaservicio');
-        const proformasData = response.data.map((proforma: Proforma) => ({
-          id: proforma.id,
-          codigo_ordentrabajo: proforma.codigo_ordentrabajo,
-          detalleServicio: proforma.detalleServicio,
-          precioServicio: proforma.precioServicio,
-          tiempoEstimadoEntrega: proforma.tiempoEstimadoEntrega,
-          condicionesContratacion: proforma.condicionesContratacion,
-          estadoPago: proforma.estadoPago,
-          fecha: proforma.fecha,
-        }));
+        const data = await obtenerTodosLasProformas();
+        const proformasData = data.map(
+          (proforma: ProformaServicioListaDTO) => ({
+            id: proforma.id,
+            codigo_ordentrabajo: proforma.codigo_ordentrabajo,
+            detalleServicio: proforma.detalleServicio,
+            precioServicio: proforma.precioServicio,
+            tiempoEstimadoEntrega: proforma.tiempoEstimadoEntrega,
+            condicionesContratacion: proforma.condicionesContratacion,
+            estadoPago: proforma.estadoPago,
+            fecha: proforma.fecha,
+          })
+        );
         setProformas(proformasData);
         setLoading(false);
       } catch (err) {
@@ -73,7 +71,7 @@ export default function GestionProformasPage() {
   }, []);
 
   if (loading) {
-    return <div>Cargando proformas...</div>;
+    return <Loader />;
   }
 
   if (error) {
@@ -94,6 +92,7 @@ export default function GestionProformasPage() {
       };
 
       const response = await api.post('/api/proformaservicio', proformaData);
+      // await insertarProformaServicio(proformaData);
 
       const newProforma = {
         id: response.data.id,
@@ -122,10 +121,7 @@ export default function GestionProformasPage() {
         fecha: editingProforma.fecha,
       };
 
-      await api.put(
-        `/api/proformaservicio/${editingProforma.id}`,
-        proformaData
-      );
+      await actualizarProformaServicio(editingProforma.id, proformaData);
 
       setProformas(
         proformas.map((proforma) =>
@@ -142,7 +138,8 @@ export default function GestionProformasPage() {
   const handleDeleteProforma = async () => {
     if (!proformaToDelete) return;
     try {
-      await api.delete(`/api/proformaservicio/${proformaToDelete.id}`);
+      // await api.delete(`/api/proformaservicio/${proformaToDelete.id}`);
+      await eliminarProformaServicio(proformaToDelete.id);
       setProformas(
         proformas.filter((proforma) => proforma.id !== proformaToDelete.id)
       );
@@ -167,12 +164,12 @@ export default function GestionProformasPage() {
     setIsAddOpen(true);
   };
 
-  const openEditDialog = (proforma: Proforma) => {
+  const openEditDialog = (proforma: ProformaServicioListaDTO) => {
     setEditingProforma({ ...proforma });
     setIsEditOpen(true);
   };
 
-  const openDeleteDialog = (proforma: Proforma) => {
+  const openDeleteDialog = (proforma: ProformaServicioListaDTO) => {
     setProformaToDelete(proforma);
     setIsDeleteOpen(true);
   };
@@ -195,12 +192,7 @@ export default function GestionProformasPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('https://imgur.com/Jil1d2S.jpg')",
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-cover bg-center">
       <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
         <h1 className="text-center text-2xl font-bold text-gray-800">
           Gestión de Proformas
@@ -227,7 +219,7 @@ export default function GestionProformasPage() {
               </tr>
             </thead>
             <tbody>
-              {proformas.map((proforma: Proforma, index) => (
+              {proformas.map((proforma: ProformaServicioListaDTO, index) => (
                 <tr
                   key={proforma.id}
                   className={`${

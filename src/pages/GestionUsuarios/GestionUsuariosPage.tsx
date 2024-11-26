@@ -19,7 +19,9 @@ import {
 } from '@/components/ui/select';
 import api from '../../services/api';
 import { UsuarioResponse } from '../../interfaces/user.interface';
-import { Edit, Trash2 } from 'lucide-react';
+// import { Edit, Trash2 } from 'lucide-react';
+import Loader from '@/components/Loader';
+import { eliminarUsuario, obtenerTodosLosUsuarios } from '@/services/usuario.service';
 
 export default function GestionUsuariosPage() {
   const [usuarios, setUsuarios] = useState<User[]>([]);
@@ -45,34 +47,34 @@ export default function GestionUsuariosPage() {
     }
   };
 
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const response = await api.get('/api/usuarios');
-        const usuariosMapeados = response.data.map(
-          (usuario: UsuarioResponse) => ({
-            id: usuario.id,
-            username: usuario.nombreusuario,
-            fullName: usuario.nombrecompleto,
-            email: usuario.correoelectronico,
-            role: usuario.rol.replace('ROLE_', ''),
-          })
-        );
-        setUsuarios(usuariosMapeados);
-        setLoading(false);
-      } catch (err) {
-        setError('Error al cargar los usuarios');
-        setLoading(false);
-        console.error('Error:', err);
-      }
-    };
+  const fetchUsuarios = async () => {
+    try {
+      const data = await obtenerTodosLosUsuarios();
+      const usuariosMapeados = data.map(
+        (usuario: UsuarioResponse) => ({
+          id: usuario.id,
+          username: usuario.nombreusuario,
+          fullName: usuario.nombrecompleto,
+          email: usuario.correoelectronico,
+          role: usuario.rol.replace('ROLE_', ''),
+        })
+      );
+      setUsuarios(usuariosMapeados);
+      setLoading(false);
+    } catch (err) {
+      setError('Error al cargar los usuarios');
+      setLoading(false);
+      console.error('Error:', err);
+    }
+  };
 
+  useEffect(() => {
     fetchUsuarios();
-  }, []);
+  }, [usuarios]);
 
   // Agregar un estado de carga
   if (loading) {
-    return <div>Cargando usuarios...</div>;
+    return <Loader />;
   }
 
   // Mostrar error si existe
@@ -149,10 +151,12 @@ export default function GestionUsuariosPage() {
     if (!userToDelete) return;
 
     try {
-      await api.delete(`/api/usuarios/${userToDelete.id}`);
+      await eliminarUsuario(userToDelete.id);
+      // await api.delete(`/api/usuarios/${userToDelete.id}`);
       setUsuarios(usuarios.filter((user) => user.id !== userToDelete.id));
       setIsDeleteOpen(false);
       setUserToDelete(null);
+      // await fetchUsuarios();
     } catch (err) {
       console.error('Error al eliminar usuario:', err);
     }
@@ -175,12 +179,9 @@ export default function GestionUsuariosPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('https://imgur.com/Jil1d2S.jpg')",
-      }}
+      className="min-h-screen flex items-center justify-center"
     >
-      <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
+      <div className="bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
         <h1 className="text-center text-2xl font-bold text-gray-800">
           Gestión de Usuarios
         </h1>

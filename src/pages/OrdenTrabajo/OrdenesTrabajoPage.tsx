@@ -13,6 +13,7 @@ import {
   getOrdenesTrabajo,
   getOrdenTrabajoById,
 } from '@/services/orden-trabajo.service';
+import Loader from '@/components/Loader';
 
 type DetalleOrden = OrdenTrabajo & {
   documentourl: string;
@@ -122,11 +123,7 @@ export default function OrdenTrabajoPage() {
   };
 
   if (cargando) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Cargando...
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {

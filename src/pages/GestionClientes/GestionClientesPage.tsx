@@ -10,10 +10,14 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-import api from '../../services/api';
-import { ClienteResponse } from '../../interfaces/cliente.interface';
-import { Edit, Trash2 } from 'lucide-react';
+import Loader from '@/components/Loader';
+import { ClienteResponse } from '@/interfaces/cliente.interface';
+import {
+  actualizarCliente,
+  eliminarCliente,
+  insertarCliente,
+  obtenerTodosLosClientes,
+} from '@/services/cliente.service';
 
 export default function GestionClientesPage() {
   const [clientes, setClientes] = useState<Client[]>([]);
@@ -36,8 +40,8 @@ export default function GestionClientesPage() {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await api.get('/api/clientes');
-        const clientesMapeados = response.data.map((cliente: ClienteResponse) => ({
+        const data = await obtenerTodosLosClientes();
+        const clientesMapeados = data.map((cliente: ClienteResponse) => ({
           id: cliente.id,
           dni: cliente.dni,
           celular: cliente.celular,
@@ -58,7 +62,7 @@ export default function GestionClientesPage() {
 
   // Agregar un estado de carga
   if (loading) {
-    return <div>Cargando clientes...</div>;
+    return <Loader />;
   }
 
   // Mostrar error si existe
@@ -78,13 +82,13 @@ export default function GestionClientesPage() {
     e.preventDefault();
     try {
       const clientData = {
-        dni: editingClient?.dni,
-        celular: editingClient?.celular,
-        direccion: editingClient?.direccion,
-        nombrecompleto: editingClient?.fullName,
+        dni: editingClient?.dni || '',
+        celular: editingClient?.celular || '',
+        direccion: editingClient?.direccion || '',
+        nombrecompleto: editingClient?.fullName || '',
       };
 
-      await api.post('/api/clientes', clientData);
+      await insertarCliente(clientData);
 
       const newClient = {
         id: clientes.length + 1,
@@ -106,14 +110,14 @@ export default function GestionClientesPage() {
     e.preventDefault();
     try {
       const clientData = {
-        dni: editingClient?.dni,
-        celular: editingClient?.celular,
-        direccion: editingClient?.direccion,
-        nombrecompleto: editingClient?.fullName,
+        dni: editingClient?.dni || '',
+        celular: editingClient?.celular || '',
+        direccion: editingClient?.direccion || '',
+        nombrecompleto: editingClient?.fullName || '',
       };
 
       if (editingClient) {
-        await api.put(`/api/clientes/${editingClient.id}`, clientData);
+        await actualizarCliente(editingClient.id, clientData);
       }
       if (editingClient) {
         setClientes(
@@ -133,7 +137,7 @@ export default function GestionClientesPage() {
     if (!clientToDelete) return;
 
     try {
-      await api.delete(`/api/clientes/${clientToDelete.id}`);
+      await eliminarCliente(clientToDelete.id);
       setClientes(clientes.filter((client) => client.id !== clientToDelete.id));
       setIsDeleteOpen(false);
       setClientToDelete(null);
@@ -143,7 +147,13 @@ export default function GestionClientesPage() {
   };
 
   const openAddDialog = () => {
-    setEditingClient({ id: 0, dni: '', celular: '', direccion: '', fullName: '' });
+    setEditingClient({
+      id: 0,
+      dni: '',
+      celular: '',
+      direccion: '',
+      fullName: '',
+    });
     setIsAddOpen(true);
   };
 
@@ -158,9 +168,7 @@ export default function GestionClientesPage() {
   };
 
   return (
-    <div
-      className="min-h-screen"
-    >
+    <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-[1200px] bg-gray bg-opacity-80 rounded-lg p-5 shadow-lg mx-4">
         <h1 className="text-center text-2xl font-bold text-gray-800">
           Gestión de Clientes

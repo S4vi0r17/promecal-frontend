@@ -12,6 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import api from '../../services/api';
 import axios from 'axios';
+import Loader from '@/components/Loader';
+import { OrdenTrabajoListaDTO } from '@/interfaces/orden-trabajo.interface';
+import { getOrdenesTrabajo } from '@/services/orden-trabajo.service';
 
 
 export default function GestionOrdenTrabajoPage() {
@@ -63,8 +66,8 @@ export default function GestionOrdenTrabajoPage() {
   useEffect(() => {
     const fetchOrdenes = async () => {
       try {
-        const response = await api.get('/api/ordentrabajo');
-        const ordenesMapeadas = response.data.map((orden: any) => ({
+        const data = await getOrdenesTrabajo();
+        const ordenesMapeadas = data.map((orden: OrdenTrabajoListaDTO) => ({ // Any
           id: orden.id,
           dni: orden.dni,
           codigo: orden.codigo,
@@ -91,7 +94,7 @@ export default function GestionOrdenTrabajoPage() {
 
   // Agregar un estado de carga
   if (loading) {
-    return <div>Cargando órdenes de trabajo...</div>;
+    return <Loader />;
   }
 
   // Mostrar error si existe
@@ -127,7 +130,7 @@ export default function GestionOrdenTrabajoPage() {
       });
 
       // Actualizar la lista de órdenes
-      const response = await api.get('/api/ordentrabajo');
+      const response = await getOrdenesTrabajo();
       console.log(response);
       setOrdenes(response.data);
 
@@ -224,7 +227,7 @@ export default function GestionOrdenTrabajoPage() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-gray-100"
+      className="min-h-screen flex justify-center items-center bg-gray-100"
       
     >
       <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
