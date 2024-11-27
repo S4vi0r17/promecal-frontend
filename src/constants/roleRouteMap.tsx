@@ -5,12 +5,14 @@ import GestionarProformaPage from '@/pages/GestionarProforma/GestionarProformaPa
 import GestionOrdenTrabajoPage from '@/pages/GestionOrden/GestionOrdenTrabajoPage';
 import OrdenesTrabajoPage from '@/pages/OrdenTrabajo/OrdenesTrabajoPage.tsx';
 import InformeDiagnosticoPage from '@/pages/InformeDiagnostico/InformeDiagnosticoPage';
+import RegistrarPago from '@/pages/RegistrarPago/RegistrarPagoPage';
 
 export const roleRouteMap = {
   [ROLES.ADMINISTRADOR]: [{ path: '/home/admin', element: <GestionUsuariosPage /> }],
   [ROLES.EJECUTIVO_VENTAS]: [
     { path: '/home/gestionar-clientes', element: <GestionClientesPage /> },
     { path: '/home/gestionar-proforma', element: <GestionarProformaPage /> },
+    { path: '/home/registrar-pago', element: <RegistrarPago /> },
   ],
   [ROLES.ASISTENTE_RECEPCION]: [
     { path: '/home/gestionar-orden', element: <GestionOrdenTrabajoPage /> },
