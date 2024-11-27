@@ -42,7 +42,9 @@ export default function GestionOrdenTrabajoPage() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [orderToDelete, setOrderToDelete] = useState<OrdenDeTrabajo | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<OrdenDeTrabajo | null>(
+    null
+  );
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -294,40 +296,39 @@ export default function GestionOrdenTrabajoPage() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
-        <h1 className="text-center text-2xl font-bold text-gray-800">
-          Gestión de Órdenes de Trabajo
-        </h1>
-        <button
-          onClick={openAddDialog}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md mt-4 block mx-auto"
-        >
-          Agregar Orden de Trabajo
-        </button>
-        <div className="overflow-x-auto mt-6 flex flex-col justify-between gap-5 min-h-72">
+    <div className="min-h-screen flex justify-center items-center">
+      <div className="container bg-white max-w-[1350px] p-5 shadow-xl">
+        <div className="flex items-center justify-between">
+          <h1 className="text-center text-2xl font-bold text-gray-800">
+            Gestión de Órdenes de Trabajo
+          </h1>
+          <Button
+            onClick={openAddDialog}
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
+            Agregar Orden de Trabajo
+          </Button>
+        </div>
+        <div className="mt-6 flex flex-col justify-between items-center gap-5 min-h-80">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-100">
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>DNI del Cliente</TableHead>
-                <TableHead>Código</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Descripción</TableHead>
-                <TableHead>Modelo</TableHead>
-                <TableHead>Marca</TableHead>
-                <TableHead>Rajaduras</TableHead>
-                <TableHead>Manchas</TableHead>
-                <TableHead>Golpes</TableHead>
-                <TableHead>Acciones</TableHead>
+                <TableHead className="text-center">ID</TableHead>
+                <TableHead className="text-center">DNI del Cliente</TableHead>
+                <TableHead className="text-center">Código</TableHead>
+                <TableHead className="text-center">Fecha</TableHead>
+                <TableHead className="text-center">Descripción</TableHead>
+                <TableHead className="text-center">Modelo</TableHead>
+                <TableHead className="text-center">Marca</TableHead>
+                <TableHead className="text-center">Rajaduras</TableHead>
+                <TableHead className="text-center">Manchas</TableHead>
+                <TableHead className="text-center">Golpes</TableHead>
+                <TableHead className="text-center">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentItems.map((orden: OrdenDeTrabajo, index) => (
-                <TableRow
-                  key={orden.id}
-                  className={index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}
-                >
+              {currentItems.map((orden: OrdenDeTrabajo) => (
+                <TableRow key={orden.id} className="text-center">
                   <TableCell>{orden.id}</TableCell>
                   <TableCell>{orden.dni}</TableCell>
                   <TableCell>{orden.codigo}</TableCell>
@@ -340,7 +341,10 @@ export default function GestionOrdenTrabajoPage() {
                   <TableCell>{orden.golpes ? 'Sí' : 'No'}</TableCell>
                   <TableCell>
                     <div className="flex justify-center space-x-2">
-                      <Button onClick={() => openEditDialog(orden)}>
+                      <Button
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        onClick={() => openEditDialog(orden)}
+                      >
                         Modificar
                       </Button>
                       <Button

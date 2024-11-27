@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { AlertCircle } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,18 +11,22 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
-import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
-import api from '@/services/api';
 
 import { ProformaSearchForm } from '@/components/RegistrarPago/ProformaSearchForm';
 import { ProformaSelector } from '@/components/RegistrarPago/ProformaSelector';
 import { ProformaDetails } from '@/components/RegistrarPago/ProformaDetails';
 import { PaymentFileUpload } from '@/components/RegistrarPago/PaymentFileUpload';
 
+import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+import {
+  obtenerProformaServicioPorCliente,
+  registrarPagoService,
+} from '@/services/proforma-servicio.service';
+
 export default function RegistrarPago() {
   const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
-  const [proformaSeleccionada, setProformaSeleccionada] = useState<ProformaServicioListaDTO | null>(null);
+  const [proformaSeleccionada, setProformaSeleccionada] =
+    useState<ProformaServicioListaDTO | null>(null);
   const [comprobante, setComprobante] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [exito, setExito] = useState(false);
@@ -30,10 +36,8 @@ export default function RegistrarPago() {
     setCargando(true);
     setError('');
     try {
-      const response = await api.get(
-        `http://localhost:8080/api/proformaservicio/cliente/${dni}`
-      );
-      setProformas(response.data);
+      const data = await obtenerProformaServicioPorCliente(dni);
+      setProformas(data);
       setProformaSeleccionada(null);
     } catch (err) {
       setError(
@@ -61,10 +65,7 @@ export default function RegistrarPago() {
       const formData = new FormData();
       formData.append('file', comprobante);
 
-      await api.post(
-        `http://localhost:8080/api/proformaservicio/${proformaSeleccionada.id}/pago`,
-        formData
-      );
+      await registrarPagoService(proformaSeleccionada.id, comprobante);
 
       setExito(true);
       setProformas(
@@ -94,64 +95,69 @@ export default function RegistrarPago() {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>Registrar Pago</CardTitle>
-        <CardDescription>
-          Ingrese el DNI del cliente para buscar sus proformas pendientes
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <ProformaSearchForm onSearch={buscarProformas} cargando={cargando} />
-
-          {proformas.length > 0 && (
-            <ProformaSelector
-              proformas={proformas}
-              onSelectProforma={setProformaSeleccionada}
+    <div className="flex justify-center items-center min-h-screen">
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle>Registrar Pago</CardTitle>
+          <CardDescription>
+            Ingrese el DNI del cliente para buscar sus proformas pendientes
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <ProformaSearchForm
+              onSearch={buscarProformas}
+              cargando={cargando}
             />
-          )}
 
-          {proformaSeleccionada && (
-            <ProformaDetails proforma={proformaSeleccionada} />
-          )}
+            {proformas.length > 0 && (
+              <ProformaSelector
+                proformas={proformas}
+                onSelectProforma={setProformaSeleccionada}
+              />
+            )}
 
-          {proformaSeleccionada && (
-            <PaymentFileUpload
-              onFileChange={setComprobante}
-              comprobante={comprobante}
-            />
-          )}
+            {proformaSeleccionada && (
+              <ProformaDetails proforma={proformaSeleccionada} />
+            )}
 
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+            {proformaSeleccionada && (
+              <PaymentFileUpload
+                onFileChange={setComprobante}
+                comprobante={comprobante}
+              />
+            )}
 
-          {exito && (
-            <Alert>
-              <AlertTitle>Éxito</AlertTitle>
-              <AlertDescription>
-                El pago ha sido registrado exitosamente.
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-end space-x-2">
-        <Button variant="outline" onClick={resetForm}>
-          Cancelar
-        </Button>
-        <Button
-          onClick={registrarPago}
-          disabled={!proformaSeleccionada || !comprobante || cargando}
-        >
-          {cargando ? 'Procesando...' : 'Registrar Pago'}
-        </Button>
-      </CardFooter>
-    </Card>
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {exito && (
+              <Alert>
+                <AlertTitle>Éxito</AlertTitle>
+                <AlertDescription>
+                  El pago ha sido registrado exitosamente.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-end space-x-2">
+          <Button variant="outline" onClick={resetForm}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={registrarPago}
+            disabled={!proformaSeleccionada || !comprobante || cargando}
+          >
+            {cargando ? 'Procesando...' : 'Registrar Pago'}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }
