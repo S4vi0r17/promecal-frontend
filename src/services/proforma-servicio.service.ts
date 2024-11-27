@@ -11,10 +11,12 @@ export const obtenerTodosLasProformas = async (): Promise<
   return data;
 };
 
+// TODO: Falta implementar
 export const insertarProformaServicio = async (
   proforma: ProformaServicioDTO
 ): Promise<void> => {
-  await api.post('/api/proformaservicio', proforma);
+  const data = await api.post('/api/proformaservicio', proforma);
+  console.log(data);
 };
 
 // Obtener detalles de una proforma de servicio por ID
@@ -45,7 +47,10 @@ export const obtenerProformaServicioPorCliente = async (
 };
 
 // Registrar pago con archivo adjunto
-export const registrarPago = async (id: number, file: File): Promise<void> => {
+export const registrarPagoService = async (
+  id: number,
+  file: File
+): Promise<void> => {
   const formData = new FormData();
   formData.append('file', file);
 

@@ -18,6 +18,14 @@ import {
   insertarCliente,
   obtenerTodosLosClientes,
 } from '@/services/cliente.service';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export default function GestionClientesPage() {
   const [clientes, setClientes] = useState<Client[]>([]);
@@ -81,14 +89,14 @@ export default function GestionClientesPage() {
   const handleAddClient = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const clientData = {
+      const clienTableCellata = {
         dni: editingClient?.dni || '',
         celular: editingClient?.celular || '',
         direccion: editingClient?.direccion || '',
         nombrecompleto: editingClient?.fullName || '',
       };
 
-      await insertarCliente(clientData);
+      await insertarCliente(clienTableCellata);
 
       const newClient = {
         id: clientes.length + 1,
@@ -109,7 +117,7 @@ export default function GestionClientesPage() {
   const handleEditClient = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const clientData = {
+      const clienTableCellata = {
         dni: editingClient?.dni || '',
         celular: editingClient?.celular || '',
         direccion: editingClient?.direccion || '',
@@ -117,8 +125,9 @@ export default function GestionClientesPage() {
       };
 
       if (editingClient) {
-        await actualizarCliente(editingClient.id, clientData);
+        await actualizarCliente(editingClient.id, clienTableCellata);
       }
+      
       if (editingClient) {
         setClientes(
           clientes.map((client) =>
@@ -126,6 +135,7 @@ export default function GestionClientesPage() {
           )
         );
       }
+
       setIsEditOpen(false);
       setEditingClient(null);
     } catch (err) {
@@ -157,7 +167,7 @@ export default function GestionClientesPage() {
     setIsAddOpen(true);
   };
 
-  const openEditDialog = (client: Client) => {
+  const openEdiTableCellialog = (client: Client) => {
     setEditingClient({ ...client });
     setIsEditOpen(true);
   };
@@ -169,69 +179,73 @@ export default function GestionClientesPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-[1200px] bg-gray bg-opacity-80 rounded-lg p-5 shadow-lg mx-4">
-        <h1 className="text-center text-2xl font-bold text-gray-800">
-          Gestión de Clientes
-        </h1>
-        <button
-          onClick={openAddDialog}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md mt-4 block mx-auto"
-        >
-          Agregar Cliente
-        </button>
+      <div className="w-full max-w-[1250px] bg-gray shadow-xl p-5">
+        <div className="flex justify-between items-center">
+          <h1 className="text-center text-2xl font-bold text-gray-800">
+            Gestión de Clientes
+          </h1>
+          <Button
+            onClick={openAddDialog}
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
+            Agregar Cliente
+          </Button>
+        </div>
         <div className="overflow-x-auto mt-6">
-          <table className="w-full border-collapse client-table">
-            <thead>
-              <tr className="bg-gray-200 text-gray-800">
-                <th className="border py-2 px-4">ID</th>
-                <th className="border py-2 px-4">Nombre Completo</th>
-                <th className="border py-2 px-4">DNI</th>
-                <th className="border py-2 px-4">Celular</th>
-                <th className="border py-2 px-4">Dirección</th>
-                <th className="border py-2 px-4">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientes.map((cliente: Client, index) => (
-                <tr
+          <Table className="w-full border-collapse client-table">
+            <TableHeader>
+              <TableRow className="bg-gray-100 text-gray-800">
+                <TableHead className="text-center">ID</TableHead>
+                <TableHead className="text-center">Nombre Completo</TableHead>
+                <TableHead className="text-center">DNI</TableHead>
+                <TableHead className="text-center">Celular</TableHead>
+                <TableHead className="text-center">Dirección</TableHead>
+                <TableHead className="text-center">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {clientes.map((cliente: Client) => (
+                <TableRow
                   key={cliente.id}
-                  className={`${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                  } hover:bg-gray-200`}
+                  // className={`${
+                  //   index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                  // } hover:bg-gray-100`}
                 >
-                  <td className="border py-2 px-4 text-center">{cliente.id}</td>
-                  <td className="border py-2 px-4 text-center">
+                  <TableCell className="text-center">
+                    {cliente.id}
+                  </TableCell>
+                  <TableCell className="text-center">
                     {cliente.fullName}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="text-center">
                     {cliente.dni}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="text-center">
                     {cliente.celular}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="text-center">
                     {cliente.direccion}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
-                    <div className="flex justify-center space-x-2">
-                      <button
-                        onClick={() => openEditDialog(cliente)}
-                        className="bg-blue-900 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md"
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex justify-center items-center space-x-2">
+                      <Button
+                        onClick={() => openEdiTableCellialog(cliente)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md"
                       >
                         Modificar
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => openDeleteDialog(cliente)}
-                        className="bg-red-700 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md"
                       >
                         Eliminar
-                      </button>
+                      </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Diálogo para agregar cliente */}

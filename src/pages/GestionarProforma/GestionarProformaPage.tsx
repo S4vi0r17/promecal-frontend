@@ -1,23 +1,32 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import api from '../../services/api';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import Loader from '@/components/Loader';
-import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+import api from '../../services/api';
 import {
   actualizarProformaServicio,
   eliminarProformaServicio,
+  insertarProformaServicio,
   obtenerTodosLasProformas,
 } from '@/services/proforma-servicio.service';
+import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
 
 export default function GestionProformasPage() {
   const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
@@ -92,7 +101,7 @@ export default function GestionProformasPage() {
       };
 
       const response = await api.post('/api/proformaservicio', proformaData);
-      // await insertarProformaServicio(proformaData);
+      // const data = await insertarProformaServicio(proformaData);
 
       const newProforma = {
         id: response.data.id,
@@ -193,83 +202,91 @@ export default function GestionProformasPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center">
-      <div className="container bg-white bg-opacity-90 rounded-lg max-w-[1200px] mx-auto p-5 shadow-lg">
-        <h1 className="text-center text-2xl font-bold text-gray-800">
-          Gestión de Proformas
-        </h1>
-        <button
-          onClick={openAddDialog}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md mt-4 block mx-auto"
-        >
-          Agregar Proforma
-        </button>
-        <div className="overflow-x-auto mt-6">
-          <table className="w-full border-collapse user-table">
-            <thead>
-              <tr className="bg-gray-200 text-gray-800">
-                <th className="border py-2 px-4">ID</th>
-                <th className="border py-2 px-4">Código Orden Trabajo</th>
-                <th className="border py-2 px-4">Detalle Servicio</th>
-                <th className="border py-2 px-4">Precio Servicio</th>
-                <th className="border py-2 px-4">Tiempo Estimado Entrega</th>
-                <th className="border py-2 px-4">Condiciones Contratación</th>
-                <th className="border py-2 px-4">Estado Pago</th>
-                <th className="border py-2 px-4">Fecha</th>
-                <th className="border py-2 px-4">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {proformas.map((proforma: ProformaServicioListaDTO, index) => (
-                <tr
+      <div className="container bg-white max-w-[1250px] mx-auto p-5 shadow-xl">
+        <div className="flex justify-between items-center">
+          <h1 className="text-center text-2xl font-bold text-gray-800">
+            Gestión de Proformas
+          </h1>
+          <Button
+            onClick={openAddDialog}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md"
+          >
+            Agregar Proforma
+          </Button>
+        </div>
+        <div className="mt-6 w-full">
+          <Table className="w-full border-collapse user-table">
+            <TableHeader>
+              <TableRow className="bg-gray-100 text-gray-800">
+                <TableHead className="text-center">ID</TableHead>
+                <TableHead className="text-center">
+                  Código Orden Trabajo
+                </TableHead>
+                <TableHead className="text-center">Detalle Servicio</TableHead>
+                <TableHead className="text-center">Precio Servicio</TableHead>
+                <TableHead className="text-center">
+                  Tiempo Estimado Entrega
+                </TableHead>
+                <TableHead className="text-center">
+                  Condiciones Contratación
+                </TableHead>
+                <TableHead className="text-center">Estado Pago</TableHead>
+                <TableHead className="text-center">Fecha</TableHead>
+                <TableHead className="text-center">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {proformas.map((proforma: ProformaServicioListaDTO) => (
+                <TableRow
                   key={proforma.id}
-                  className={`${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                  } hover:bg-gray-200`}
+                  // className={`${
+                  //   index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+                  // } hover:bg-gray-200`}
                 >
-                  <td className="border py-2 px-4 text-center">
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.id}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.codigo_ordentrabajo}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.detalleServicio}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.precioServicio}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.tiempoEstimadoEntrega}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.condicionesContratacion}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {proforma.estadoPago}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     {formatFechaDisplay(proforma.fecha)}
-                  </td>
-                  <td className="border py-2 px-4 text-center">
+                  </TableCell>
+                  <TableCell className="py-2 px-4 text-center">
                     <div className="flex justify-center space-x-2">
-                      <button
+                      <Button
                         onClick={() => openEditDialog(proforma)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
                       >
                         Modificar
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => openDeleteDialog(proforma)}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md"
+                        className="bg-red-500 hover:bg-red-600 text-white"
                       >
                         Eliminar
-                      </button>
+                      </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
 
         {/* Diálogo para agregar proforma */}
