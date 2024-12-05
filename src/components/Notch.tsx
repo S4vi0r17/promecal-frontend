@@ -8,7 +8,7 @@ interface NotchProps {
 
 export function Notch({ userName, userImage }: NotchProps) {
   return (
-    <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50">
+    <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 select-none">
       <div className="relative">
         {/* Background */}
         <div className="w-[300px] h-[40px] bg-white shadow-xl rounded-b-xl">

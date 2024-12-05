@@ -10,7 +10,6 @@ interface DynamicIslandProps {
 
 export function DynamicIsland({ userName, userImage }: DynamicIslandProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsExpanded(true);
@@ -20,7 +19,7 @@ export function DynamicIsland({ userName, userImage }: DynamicIslandProps) {
   }, []);
 
   return (
-    <div className="fixed top-4 left-3/4 transform -translate-x-1/2 z-50">
+    <div className="fixed top-4 left-3/4 transform -translate-x-1/2 z-50 select-none">
       <AnimatePresence>
         <motion.div
           initial={{ width: '120px', height: '32px', borderRadius: '16px' }}
