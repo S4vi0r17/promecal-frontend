@@ -27,7 +27,7 @@ export function DynamicIsland({ userName, userImage }: DynamicIslandProps) {
           animate={
             isExpanded
               ? { width: '280px', height: '40px', borderRadius: '20px' }
-              : {}
+              : { width: '80px', height: '40px', borderRadius: '16px' }
           }
           transition={{ duration: 0.3 }}
           className="bg-white text-black flex items-center shadow-xl justify-center cursor-pointer"

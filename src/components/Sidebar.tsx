@@ -19,7 +19,7 @@ interface Route {
 }
 
 export function Sidebar() {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const navigate = useNavigate();
   const [allowedRoutes, setAllowedRoutes] = useState<Route[]>([]);
 
@@ -52,7 +52,7 @@ export function Sidebar() {
     <div
       className={cn(
         'flex h-screen flex-col justify-between border-r bg-gray-100 transition-all duration-300',
-        isExpanded ? 'w-64' : 'w-16'
+        isExpanded ? 'w-52' : 'w-16'
       )}
     >
       <div className="flex flex-col space-y-2 p-3">

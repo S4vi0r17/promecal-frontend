@@ -3,7 +3,7 @@ const SinNombre = () => {
     <div className="w-full h-screen overflow-hidden">
       <img
         className="w-full h-full object-cover"
-        src="https://i.ibb.co/P9CRVFK/Whats-App-Image-2024-11-12-at-19-49-46-5812c8d9.jpg"
+        src="https://i.ibb.co/rmnNsdV/449121424-122185748408017908-6241351074388122789-n.jpg"
         alt="Promecal"
       />
     </div>
