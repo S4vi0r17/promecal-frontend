@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { UserPlus } from 'lucide-react';
 
 export default function GestionClientesPage() {
   const [clientes, setClientes] = useState<Client[]>([]);
@@ -188,6 +189,7 @@ export default function GestionClientesPage() {
             onClick={openAddDialog}
             className="bg-green-500 hover:bg-green-600 text-white"
           >
+            <UserPlus className="w-4 h-4 mr-2" />
             Agregar Cliente
           </Button>
         </div>
