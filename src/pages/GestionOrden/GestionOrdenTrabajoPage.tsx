@@ -505,7 +505,7 @@ export default function GestionOrdenTrabajoPage() {
                 </Label>
               </div>
               <div>
-                <Label htmlFor="file">Archivo (PDF)</Label>
+                <Label htmlFor="file">Guia de Remision (PDF)</Label>
                 <Input
                   id="file"
                   name="file"
