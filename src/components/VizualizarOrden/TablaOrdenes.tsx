@@ -1,3 +1,7 @@
+import { useState, useMemo } from 'react';
+
+import { OrdenTrabajo } from '@/types/ordenTrabajo';
+
 import {
   Table,
   TableBody,
@@ -6,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import {
   Pagination,
   PaginationContent,
@@ -15,11 +20,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { OrdenTrabajo } from '@/types/ordenTrabajo';
-import { useState, useMemo } from 'react';
 
 type TablaOrdenesProps = {
   ordenes: OrdenTrabajo[];

@@ -1,3 +1,6 @@
+import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -5,8 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
 
 interface ProformaSelectorProps {
   proformas: ProformaServicioListaDTO[];

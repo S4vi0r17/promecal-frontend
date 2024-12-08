@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { User, Lock, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
+
+import { User, Lock, Sun, Moon } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

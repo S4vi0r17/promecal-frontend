@@ -1,4 +1,16 @@
 import { useEffect, useState } from 'react';
+
+import {
+  actualizarProformaServicio,
+  eliminarProformaServicio,
+  insertarProformaServicio,
+  obtenerTodosLasProformas,
+} from '@/services/proforma-servicio.service';
+
+import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+
+import api from '../../services/api';
+
 import {
   Dialog,
   DialogContent,
@@ -7,9 +19,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+
 import {
   Table,
   TableBody,
@@ -18,15 +32,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import Loader from '@/components/Loader';
-import api from '../../services/api';
-import {
-  actualizarProformaServicio,
-  eliminarProformaServicio,
-  insertarProformaServicio,
-  obtenerTodosLasProformas,
-} from '@/services/proforma-servicio.service';
-import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+
+import { Trash, UserPen, UserPlus2 } from 'lucide-react';
 
 export default function GestionProformasPage() {
   const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
@@ -202,22 +211,20 @@ export default function GestionProformasPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center">
-      <div className="container bg-white max-w-[1250px] mx-auto p-5 shadow-xl">
+      <div className="container bg-white max-w-[1250px] mx-auto p-5">
         <div className="flex justify-between items-center">
           <h1 className="text-center text-2xl font-bold text-gray-800">
             Gestión de Proformas
           </h1>
-          <Button
-            onClick={openAddDialog}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md"
-          >
+          <Button onClick={openAddDialog}>
+            <UserPlus2 className="w-6 h-6" />
             Agregar Proforma
           </Button>
         </div>
         <div className="mt-6 w-full">
-          <Table className="w-full border-collapse user-table">
+          <Table className="w-full">
             <TableHeader>
-              <TableRow className="bg-gray-100 text-gray-800">
+              <TableRow className="text-gray-800">
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead className="text-center">
                   Código Orden Trabajo
@@ -271,14 +278,16 @@ export default function GestionProformasPage() {
                     <div className="flex justify-center space-x-2">
                       <Button
                         onClick={() => openEditDialog(proforma)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        variant={'outline'}
                       >
+                        <UserPen className="w-6 h-6" />
                         Modificar
                       </Button>
                       <Button
                         onClick={() => openDeleteDialog(proforma)}
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        variant={'destructive'}
                       >
+                        <Trash className="w-6 h-6" />
                         Eliminar
                       </Button>
                     </div>

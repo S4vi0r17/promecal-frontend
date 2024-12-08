@@ -1,4 +1,14 @@
 import { useEffect, useState } from 'react';
+
+import { ClienteResponse } from '@/interfaces/cliente.interface';
+import {
+  actualizarCliente,
+  eliminarCliente,
+  insertarCliente,
+  obtenerTodosLosClientes,
+} from '@/services/cliente.service';
+
+import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,14 +20,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Loader from '@/components/Loader';
-import { ClienteResponse } from '@/interfaces/cliente.interface';
-import {
-  actualizarCliente,
-  eliminarCliente,
-  insertarCliente,
-  obtenerTodosLosClientes,
-} from '@/services/cliente.service';
 import {
   Table,
   TableBody,
@@ -26,7 +28,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { UserPlus } from 'lucide-react';
+
+import { Edit, Trash2, UserPlus } from 'lucide-react';
 
 export default function GestionClientesPage() {
   const [clientes, setClientes] = useState<Client[]>([]);
@@ -128,7 +131,7 @@ export default function GestionClientesPage() {
       if (editingClient) {
         await actualizarCliente(editingClient.id, clienTableCellata);
       }
-      
+
       if (editingClient) {
         setClientes(
           clientes.map((client) =>
@@ -180,15 +183,12 @@ export default function GestionClientesPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-[1250px] bg-gray shadow-xl p-5">
+      <div className="w-full max-w-[1200px]">
         <div className="flex justify-between items-center">
           <h1 className="text-center text-2xl font-bold text-gray-800">
             Gestión de Clientes
           </h1>
-          <Button
-            onClick={openAddDialog}
-            className="bg-green-500 hover:bg-green-600 text-white"
-          >
+          <Button onClick={openAddDialog} variant={'default'}>
             <UserPlus className="w-4 h-4 mr-2" />
             Agregar Cliente
           </Button>
@@ -196,7 +196,7 @@ export default function GestionClientesPage() {
         <div className="overflow-x-auto mt-6">
           <Table className="w-full border-collapse client-table">
             <TableHeader>
-              <TableRow className="bg-gray-100 text-gray-800">
+              <TableRow className="text-gray-800">
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead className="text-center">Nombre Completo</TableHead>
                 <TableHead className="text-center">DNI</TableHead>
@@ -207,39 +207,34 @@ export default function GestionClientesPage() {
             </TableHeader>
             <TableBody>
               {clientes.map((cliente: Client) => (
-                <TableRow
-                  key={cliente.id}
-                  // className={`${
-                  //   index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  // } hover:bg-gray-100`}
-                >
-                  <TableCell className="text-center">
-                    {cliente.id}
-                  </TableCell>
-                  <TableCell className="text-center">
+                <TableRow key={cliente.id}>
+                  <TableCell className="text-center py-2 px-4">{cliente.id}</TableCell>
+                  <TableCell className="text-center py-2 px-4">
                     {cliente.fullName}
                   </TableCell>
-                  <TableCell className="text-center">
-                    {cliente.dni}
-                  </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center py-2 px-4">{cliente.dni}</TableCell>
+                  <TableCell className="text-center py-2 px-4">
                     {cliente.celular}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center py-2 px-4">
                     {cliente.direccion}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center py-2 px-4">
                     <div className="flex justify-center items-center space-x-2">
                       <Button
                         onClick={() => openEdiTableCellialog(cliente)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md"
+                        className="font-bold py-1 px-3 rounded-md"
+                        variant={'outline'}
                       >
+                        <Edit className="w-4 h-4 mr-1" />
                         Modificar
                       </Button>
                       <Button
+                        variant={'destructive'}
                         onClick={() => openDeleteDialog(cliente)}
-                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md"
+                        className="text-white font-bold py-1 px-3 rounded-md"
                       >
+                        <Trash2 className="w-4 h-4 mr-1" />
                         Eliminar
                       </Button>
                     </div>
@@ -298,12 +293,7 @@ export default function GestionClientesPage() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Guardar Cliente
-                </Button>
+                <Button type="submit">Guardar Cliente</Button>
               </div>
             </form>
           </DialogContent>
@@ -357,12 +347,7 @@ export default function GestionClientesPage() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Guardar Cambios
-                </Button>
+                <Button type="submit">Guardar Cambios</Button>
               </div>
             </form>
           </DialogContent>
