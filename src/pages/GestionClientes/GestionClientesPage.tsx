@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { ClienteResponse } from '@/interfaces/cliente.interface';
+import { ClienteListaDTO, ClienteResponse } from '@/interfaces/cliente.interface';
 import {
   actualizarCliente,
   eliminarCliente,
@@ -32,15 +32,15 @@ import {
 import { Edit, Trash2, UserPlus } from 'lucide-react';
 
 export default function GestionClientesPage() {
-  const [clientes, setClientes] = useState<Client[]>([]);
+  const [clientes, setClientes] = useState<ClienteListaDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
 
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [editingClient, setEditingClient] = useState<ClienteListaDTO | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [clientToDelete, setClientToDelete] = useState<ClienteListaDTO | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,7 +58,7 @@ export default function GestionClientesPage() {
           dni: cliente.dni,
           celular: cliente.celular,
           direccion: cliente.direccion,
-          fullName: cliente.nombrecompleto,
+          nombrecompleto: cliente.nombrecompleto,
         }));
         setClientes(clientesMapeados);
         setLoading(false);
@@ -82,14 +82,6 @@ export default function GestionClientesPage() {
     return <div>Error: {error}</div>;
   }
 
-  interface Client {
-    id: number;
-    dni: string;
-    celular: string;
-    direccion: string;
-    fullName: string;
-  }
-
   const handleAddClient = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -97,7 +89,7 @@ export default function GestionClientesPage() {
         dni: editingClient?.dni || '',
         celular: editingClient?.celular || '',
         direccion: editingClient?.direccion || '',
-        nombrecompleto: editingClient?.fullName || '',
+        nombrecompleto: editingClient?.nombrecompleto || '',
       };
 
       await insertarCliente(clienTableCellata);
@@ -107,7 +99,7 @@ export default function GestionClientesPage() {
         dni: editingClient?.dni || '',
         celular: editingClient?.celular || '',
         direccion: editingClient?.direccion || '',
-        fullName: editingClient?.fullName || '',
+        nombrecompleto: editingClient?.nombrecompleto || '',
       };
 
       setClientes([...clientes, newClient]);
@@ -125,7 +117,7 @@ export default function GestionClientesPage() {
         dni: editingClient?.dni || '',
         celular: editingClient?.celular || '',
         direccion: editingClient?.direccion || '',
-        nombrecompleto: editingClient?.fullName || '',
+        nombrecompleto: editingClient?.nombrecompleto || '',
       };
 
       if (editingClient) {
@@ -166,17 +158,17 @@ export default function GestionClientesPage() {
       dni: '',
       celular: '',
       direccion: '',
-      fullName: '',
+      nombrecompleto: '',
     });
     setIsAddOpen(true);
   };
 
-  const openEdiTableCellialog = (client: Client) => {
+  const openEdiTableCellialog = (client: ClienteListaDTO) => {
     setEditingClient({ ...client });
     setIsEditOpen(true);
   };
 
-  const openDeleteDialog = (client: Client) => {
+  const openDeleteDialog = (client: ClienteListaDTO) => {
     setClientToDelete(client);
     setIsDeleteOpen(true);
   };
@@ -206,11 +198,11 @@ export default function GestionClientesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {clientes.map((cliente: Client) => (
+              {clientes.map((cliente: ClienteListaDTO) => (
                 <TableRow key={cliente.id}>
                   <TableCell className="text-center py-2 px-4">{cliente.id}</TableCell>
                   <TableCell className="text-center py-2 px-4">
-                    {cliente.fullName}
+                    {cliente.nombrecompleto}
                   </TableCell>
                   <TableCell className="text-center py-2 px-4">{cliente.dni}</TableCell>
                   <TableCell className="text-center py-2 px-4">
@@ -267,7 +259,7 @@ export default function GestionClientesPage() {
                 <Input
                   id="fullName"
                   name="fullName"
-                  value={editingClient?.fullName || ''}
+                  value={editingClient?.nombrecompleto || ''}
                   onChange={handleInputChange}
                   required
                 />
@@ -321,7 +313,7 @@ export default function GestionClientesPage() {
                 <Input
                   id="fullName"
                   name="fullName"
-                  value={editingClient?.fullName || ''}
+                  value={editingClient?.nombrecompleto || ''}
                   onChange={handleInputChange}
                   required
                 />
@@ -369,7 +361,7 @@ export default function GestionClientesPage() {
                   <strong>ID:</strong> {clientToDelete.id}
                 </p>
                 <p>
-                  <strong>Nombre Completo:</strong> {clientToDelete.fullName}
+                  <strong>Nombre Completo:</strong> {clientToDelete.nombrecompleto}
                 </p>
                 <p>
                   <strong>DNI:</strong> {clientToDelete.dni}
