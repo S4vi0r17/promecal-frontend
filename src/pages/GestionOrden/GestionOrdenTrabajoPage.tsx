@@ -3,6 +3,7 @@ import axios from 'axios';
 import api from '../../services/api';
 import { OrdenTrabajoListaDTO } from '@/interfaces/orden-trabajo.interface';
 import { getOrdenesTrabajo } from '@/services/orden-trabajo.service';
+
 import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +33,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Pencil, Trash, UserPlus } from 'lucide-react';
 
 export default function GestionOrdenTrabajoPage() {
   const [ordenes, setOrdenes] = useState<OrdenDeTrabajo[]>([]);
@@ -297,15 +299,13 @@ export default function GestionOrdenTrabajoPage() {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <div className="container bg-white max-w-[1350px] p-5 shadow-xl">
+      <div className="container bg-white max-w-[1350px]">
         <div className="flex items-center justify-between">
           <h1 className="text-center text-2xl font-bold text-gray-800">
             Gestión de Órdenes de Trabajo
           </h1>
-          <Button
-            onClick={openAddDialog}
-            className="bg-green-500 hover:bg-green-600 text-white"
-          >
+          <Button onClick={openAddDialog}>
+            <UserPlus className="w-6 h-6 mr-1" />
             Agregar Orden de Trabajo
           </Button>
         </div>
@@ -342,15 +342,17 @@ export default function GestionOrdenTrabajoPage() {
                   <TableCell>
                     <div className="flex justify-center space-x-2">
                       <Button
-                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        variant={'outline'}
                         onClick={() => openEditDialog(orden)}
                       >
+                        <Pencil className="w-4 h-4 mr-1" />
                         Modificar
                       </Button>
                       <Button
                         onClick={() => openDeleteDialog(orden)}
                         variant="destructive"
                       >
+                        <Trash className="w-4 h-4 mr-1" />
                         Eliminar
                       </Button>
                     </div>
@@ -460,32 +462,47 @@ export default function GestionOrdenTrabajoPage() {
                   required
                 />
               </div>
-              <div>
-                <Label>Rajaduras</Label>
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="rajaduras"
+                  id="rajaduras"
                   checked={editingOrder?.rajaduras || false}
                   onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <Label
+                  htmlFor="rajaduras"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Rajaduras
+                </Label>
               </div>
-              <div>
-                <Label>Manchas</Label>
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="manchas"
+                  id="manchas"
                   checked={editingOrder?.manchas || false}
                   onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <Label htmlFor="manchas" className="ml-2 text-sm text-gray-700">
+                  Manchas
+                </Label>
               </div>
-              <div>
-                <Label>Golpes</Label>
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="golpes"
+                  id="golpes"
                   checked={editingOrder?.golpes || false}
                   onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <Label htmlFor="golpes" className="ml-2 text-sm text-gray-700">
+                  Golpes
+                </Label>
               </div>
               <div>
                 <Label htmlFor="file">Archivo (PDF)</Label>
@@ -498,12 +515,7 @@ export default function GestionOrdenTrabajoPage() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Guardar Orden
-                </Button>
+                <Button type="submit">Guardar Orden</Button>
               </div>
             </form>
           </DialogContent>
@@ -567,32 +579,47 @@ export default function GestionOrdenTrabajoPage() {
                   required
                 />
               </div>
-              <div>
-                <Label>Rajaduras</Label>
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="rajaduras"
+                  id="rajaduras"
                   checked={editingOrder?.rajaduras || false}
                   onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <Label
+                  htmlFor="rajaduras"
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Rajaduras
+                </Label>
               </div>
-              <div>
-                <Label>Manchas</Label>
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="manchas"
+                  id="manchas"
                   checked={editingOrder?.manchas || false}
                   onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <Label htmlFor="manchas" className="ml-2 text-sm text-gray-700">
+                  Manchas
+                </Label>
               </div>
-              <div>
-                <Label>Golpes</Label>
+              <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="golpes"
+                  id="golpes"
                   checked={editingOrder?.golpes || false}
                   onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <Label htmlFor="golpes" className="ml-2 text-sm text-gray-700">
+                  Golpes
+                </Label>
               </div>
               <div>
                 <Label htmlFor="file">Archivo (PDF)</Label>
@@ -605,12 +632,7 @@ export default function GestionOrdenTrabajoPage() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Guardar Cambios
-                </Button>
+                <Button type="submit">Guardar Cambios</Button>
               </div>
             </form>
           </DialogContent>

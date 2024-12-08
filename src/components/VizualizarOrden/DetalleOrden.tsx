@@ -1,3 +1,5 @@
+import { DetalleOrden, HistorialModificacion } from '@/types/ordenTrabajo';
+
 import {
   Sheet,
   SheetContent,
@@ -15,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import {
   Clock,
   User,
@@ -24,7 +27,6 @@ import {
   FileDown,
   Printer,
 } from 'lucide-react';
-import { DetalleOrden, HistorialModificacion } from '@/types/ordenTrabajo';
 
 type DetalleOrdenModalProps = {
   orden: DetalleOrden | null;

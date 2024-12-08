@@ -1,5 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ProformaDetailsProps {
   proforma: ProformaServicioListaDTO;

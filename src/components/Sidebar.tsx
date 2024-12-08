@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { ChevronRight, ChevronLeft, LogOut } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,8 +11,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+
 import { roleRouteMap } from '@/constants/roleRouteMap';
-import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 
 interface Route {
@@ -24,7 +27,6 @@ export function Sidebar() {
   const [allowedRoutes, setAllowedRoutes] = useState<Route[]>([]);
 
   useEffect(() => {
-    
     const userRole = localStorage.getItem('userRole');
 
     if (userRole) {
@@ -51,7 +53,7 @@ export function Sidebar() {
   return (
     <div
       className={cn(
-        'flex h-screen flex-col justify-between border-r bg-gray-100 transition-all duration-300',
+        'flex min-h-screen flex-col justify-between border-r bg-gray-100 transition-all duration-300',
         isExpanded ? 'w-64' : 'w-16'
       )}
     >

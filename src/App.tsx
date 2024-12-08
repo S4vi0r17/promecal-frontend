@@ -1,28 +1,27 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
-import LoginPage from '@/pages/LoginPage/LoginPage.tsx';
-import MainLayout from '@/layouts/MainLayout.tsx';
-import ProtectedRoute from '@/pages/ProtectedRoute';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import { getUserRole } from '@/helpers/auth';
 import { roleRouteMap } from './constants/roleRouteMap';
-import { useEffect, useState } from 'react';
-import GestionarProformaPage from './pages/GestionarProforma/GestionarProformaPage';
-import GestionClientesPage from './pages/GestionClientes/GestionClientesPage';
-import GestionOrdenTrabajoPage from './pages/GestionOrden/GestionOrdenTrabajoPage';
+
+import ProtectedRoute from '@/pages/ProtectedRoute';
+import LoginPage from '@/pages/LoginPage/LoginPage.tsx';
+import MainLayout from '@/layouts/MainLayout.tsx';
+
 import GestionUsuariosPage from './pages/GestionUsuarios/GestionUsuariosPage';
-import InformeDiagnosticoPage from './pages/InformeDiagnostico/InformeDiagnosticoPage';
+import GestionClientesPage from './pages/GestionClientes/GestionClientesPage';
 import OrdenesTrabajoPage from './pages/OrdenTrabajo/OrdenesTrabajoPage';
+import GestionOrdenTrabajoPage from './pages/GestionOrden/GestionOrdenTrabajoPage';
+import InformeDiagnosticoPage from './pages/InformeDiagnostico/InformeDiagnosticoPage';
 import RegistrarPagoPage from './pages/RegistrarPago/RegistrarPagoPage';
+import GestionarProformaPage from './pages/GestionarProforma/GestionarProformaPage';
 import SinNombre from './pages/SinNombre/SinNombre';
 
 function App() {
-
   // Esta webada no sirve jaaa 🦎
-  const [, setAllowedRoutes] = useState<{ path: string; element: JSX.Element; }[]>([]);
+  const [, setAllowedRoutes] = useState<
+    { path: string; element: JSX.Element }[]
+  >([]);
 
   useEffect(() => {
     const userRole = getUserRole();
@@ -44,16 +43,71 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/home" element={<SinNombre />} />
-          <Route path="admin" element={<GestionUsuariosPage />} />
-          <Route path="gestionar-clientes" element={<GestionClientesPage />} />
-          <Route path="visualizar-orden" element={<OrdenesTrabajoPage />} />
-          <Route path="gestionar-orden" element={<GestionOrdenTrabajoPage />} />
-          <Route path="informe-diagnostico" element={<InformeDiagnosticoPage />} />
-          <Route path="registrar-pago" element={<RegistrarPagoPage />} />
-          <Route path="gestionar-proforma" element={<GestionarProformaPage />} />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <SinNombre />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin"
+            element={
+              <ProtectedRoute>
+                <GestionUsuariosPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="gestionar-clientes"
+            element={
+              <ProtectedRoute>
+                <GestionClientesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="visualizar-orden"
+            element={
+              <ProtectedRoute>
+                <OrdenesTrabajoPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="gestionar-orden"
+            element={
+              <ProtectedRoute>
+                <GestionOrdenTrabajoPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="informe-diagnostico"
+            element={
+              <ProtectedRoute>
+                <InformeDiagnosticoPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="registrar-pago"
+            element={
+              <ProtectedRoute>
+                <RegistrarPagoPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="gestionar-proforma"
+            element={
+              <ProtectedRoute>
+                <GestionarProformaPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
-
       </Routes>
     </Router>
   );

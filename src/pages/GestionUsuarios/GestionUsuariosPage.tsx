@@ -1,4 +1,11 @@
 import { useEffect, useState } from 'react';
+import api from '../../services/api';
+import { UsuarioResponse } from '../../interfaces/user.interface';
+import {
+  eliminarUsuario,
+  obtenerTodosLosUsuarios,
+} from '@/services/usuario.service';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,14 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import api from '../../services/api';
-import { UsuarioResponse } from '../../interfaces/user.interface';
-// import { Edit, Trash2 } from 'lucide-react';
-import Loader from '@/components/Loader';
-import {
-  eliminarUsuario,
-  obtenerTodosLosUsuarios,
-} from '@/services/usuario.service';
 import {
   Table,
   TableBody,
@@ -33,6 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Pencil, Trash, UserPlus } from 'lucide-react';
+import Loader from '@/components/Loader';
 
 export default function GestionUsuariosPage() {
   const [usuarios, setUsuarios] = useState<User[]>([]);
@@ -188,22 +189,20 @@ export default function GestionUsuariosPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white bg-opacity-90 max-w-[1250px] p-5 shadow-lg">
+      <div className="bg-white max-w-[1250px]">
         <div className="flex justify-between items-center">
           <h1 className="text-center text-2xl font-bold text-gray-800">
             Gestión de Usuarios
           </h1>
-          <Button
-            onClick={openAddDialog}
-            className="bg-green-500 hover:bg-green-600 text-white"
-          >
+          <Button onClick={openAddDialog}>
+            <UserPlus className="w-6 h-6 mr-2" />
             Agregar Usuario
           </Button>
         </div>
         <div className="overflow-x-auto mt-6">
           <Table className="w-full border-collapse user-table">
             <TableHeader>
-              <TableRow className="bg-gray-100 text-gray-800">
+              <TableRow className="text-gray-800">
                 <TableHead className="text-center">ID</TableHead>
                 <TableHead className="text-center">Nombre Completo</TableHead>
                 <TableHead className="text-center">Usuario</TableHead>
@@ -234,14 +233,16 @@ export default function GestionUsuariosPage() {
                     <div className="flex justify-center space-x-2">
                       <Button
                         onClick={() => openEditDialog(usuario)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        variant={'outline'}
                       >
+                        <Pencil className="w-4 h-4 mr-1" />
                         Modificar
                       </Button>
                       <Button
                         onClick={() => openDeleteDialog(usuario)}
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        variant={'destructive'}
                       >
+                        <Trash className="w-4 h-4 mr-1" />
                         Eliminar
                       </Button>
                     </div>
@@ -326,12 +327,7 @@ export default function GestionUsuariosPage() {
                 </Select>
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                >
-                  Guardar Usuario
-                </Button>
+                <Button type="submit">Guardar Usuario</Button>
               </div>
             </form>
           </DialogContent>
@@ -400,12 +396,7 @@ export default function GestionUsuariosPage() {
                 </Select>
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                  Guardar Cambios
-                </Button>
+                <Button type="submit">Guardar Cambios</Button>
               </div>
             </form>
           </DialogContent>

@@ -1,5 +1,6 @@
-import { User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+import { User } from 'lucide-react';
 
 interface NotchProps {
   userName: string;

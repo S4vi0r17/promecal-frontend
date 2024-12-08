@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 import { AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { FiltrosOrdenTrabajo } from '@/components/VizualizarOrden/FiltrosOrdenTrabajo';
 import { TablaOrdenes } from '@/components/VizualizarOrden/TablaOrdenes';
 import { DetalleOrdenModal } from '@/components/VizualizarOrden/DetalleOrden';
+
 import { HistorialModificacion, OrdenTrabajo } from '@/types/ordenTrabajo';
-import axios from 'axios';
 // import { generarOrdenesPrueba } from '@/pages/OrdenTrabajo/mockData';
 
 import {

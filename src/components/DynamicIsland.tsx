@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
+
 import { User } from 'lucide-react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface DynamicIslandProps {
