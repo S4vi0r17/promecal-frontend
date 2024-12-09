@@ -1,16 +1,28 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 
-import { getOrdenesTrabajo, getOrdenTrabajoById } from '@/services/orden-trabajo.service';
+import {
+  getOrdenesTrabajo,
+  getOrdenTrabajoById,
+} from '@/services/orden-trabajo.service';
 import { tempInsertarInformeDiagnostico } from '@/services/informe-diagnostico.service';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
 import { toast } from '@/hooks/use-toast';
+import axios from 'axios';
+import { AxiosError } from 'axios';
+import { ResponseData } from '@/interfaces/response-data.interface';
 
 interface OrdenTrabajo {
   id: number;
@@ -183,12 +195,19 @@ export default function InformeDiagnosticoForm() {
       setSelectedOrden(null); // Si quieres limpiar también el estado de la orden seleccionada
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast({
-        title: 'Error',
-        description:
-          'Hubo un problema al guardar el informe. Por favor, intente nuevamente.',
-        variant: 'destructive',
-      });
+
+      if (axios.isAxiosError(error)) {
+        console.error('Error:', error.response?.data);
+        const axiosError = error as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          toast({
+            title: 'Error',
+            description: message,
+            variant: 'destructive',
+          });
+        }
+      }
     } finally {
       setIsLoading(false);
     }

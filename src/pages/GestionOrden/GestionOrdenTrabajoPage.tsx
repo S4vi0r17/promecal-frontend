@@ -39,6 +39,7 @@ import {
 } from '@/components/ui/pagination';
 import { Pencil, Trash, UserPlus } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ResponseData } from '@/interfaces/response-data.interface';
 
 export default function GestionOrdenTrabajoPage() {
   const [ordenes, setOrdenes] = useState<OrdenDeTrabajo[]>([]);
@@ -155,9 +156,8 @@ export default function GestionOrdenTrabajoPage() {
         }));
         setOrdenes(ordenesMapeadas);
       } catch (err) {
-        console.log(err);
+        console.error('Error al cargar las órdenes de trabajo:', err);
         setError('Error al cargar las órdenes de trabajo');
-        console.error('Error:', err);
       } finally {
         setLoading(false);
       }
@@ -221,11 +221,8 @@ export default function GestionOrdenTrabajoPage() {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
         if (axiosError.response) {
-          const { status, data } = axiosError.response as {
-            status: number;
-            data: string;
-          };
-          setErrorDialog(data);
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
         }
 
         setInterval(() => {
@@ -274,11 +271,8 @@ export default function GestionOrdenTrabajoPage() {
         const axiosError = err as AxiosError;
         if (axiosError.response) {
           console.log('axiosError.response', axiosError.response);
-          const { status, data } = axiosError.response as {
-            status: number;
-            data: string;
-          };
-          setErrorDialog(data);
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
         }
 
         setInterval(() => {
@@ -298,6 +292,17 @@ export default function GestionOrdenTrabajoPage() {
       setOrderToDelete(null);
     } catch (err) {
       console.error('Error al eliminar la orden de trabajo:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+        }
+
+        setInterval(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -690,6 +695,12 @@ export default function GestionOrdenTrabajoPage() {
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <DialogDescription>
               ¿Estás seguro de que deseas eliminar la siguiente orden de
               trabajo? Esta acción no puede deshacerse.

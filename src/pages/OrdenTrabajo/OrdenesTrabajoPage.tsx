@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { AxiosError } from 'axios';
 
-import { AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { FiltrosOrdenTrabajo } from '@/components/VizualizarOrden/FiltrosOrdenTrabajo';
 import { TablaOrdenes } from '@/components/VizualizarOrden/TablaOrdenes';
 import { DetalleOrdenModal } from '@/components/VizualizarOrden/DetalleOrden';
+import Loader from '@/components/Loader';
 
 import { HistorialModificacion, OrdenTrabajo } from '@/types/ordenTrabajo';
+import { ResponseData } from '@/interfaces/response-data.interface';
+
+import { useToast } from '@/hooks/use-toast';
+
 // import { generarOrdenesPrueba } from '@/pages/OrdenTrabajo/mockData';
 
 import {
@@ -15,26 +19,23 @@ import {
   getOrdenesTrabajo,
   getOrdenTrabajoById,
 } from '@/services/orden-trabajo.service';
-import Loader from '@/components/Loader';
 
 type DetalleOrden = OrdenTrabajo & {
   documentourl: string;
 };
 
 export default function OrdenTrabajoPage() {
+  const { toast } = useToast();
   const [ordenes, setOrdenes] = useState<OrdenTrabajo[]>([]);
   const [ordenesFiltered, setOrdenesFiltered] = useState<OrdenTrabajo[]>([]);
-  const [ordenSeleccionada, setOrdenSeleccionada] =
-    useState<DetalleOrden | null>(null);
-  const [historialModificaciones, setHistorialModificaciones] = useState<
-    HistorialModificacion[]
-  >([]);
+  const [ordenSeleccionada, setOrdenSeleccionada] = useState<DetalleOrden | null>(null);
+  const [historialModificaciones, setHistorialModificaciones] = useState<HistorialModificacion[]>([]);
   const [filtroFecha, setFiltroFecha] = useState('');
   const [filtroCodigo, setFiltroCodigo] = useState('');
   const [filtroCliente, setFiltroCliente] = useState('');
   const [filtroModelo, setFiltroModelo] = useState('');
   const [filtroMarca, setFiltroMarca] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
   const [detallesAbiertos, setDetallesAbiertos] = useState(false);
 
@@ -46,10 +47,13 @@ export default function OrdenTrabajoPage() {
         setOrdenes(data);
         setOrdenesFiltered(data);
       } catch {
-        if (axios.isAxiosError(error) && error.response?.data.message) {
-          setError(error.response.data.message);
+        if (
+          axios.isAxiosError(fetchError) &&
+          fetchError.response?.data.message
+        ) {
+          setFetchError(fetchError.response.data.message);
         } else {
-          setError('Error al cargar las órdenes de trabajo');
+          setFetchError('Error al cargar las órdenes de trabajo');
         }
       } finally {
         setCargando(false);
@@ -92,12 +96,27 @@ export default function OrdenTrabajoPage() {
       setOrdenSeleccionada(detalleResponse);
       setHistorialModificaciones(historialResponse);
       setDetallesAbiertos(true);
-    } catch {
-      if (axios.isAxiosError(error) && error.response?.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError('Error al cargar las órdenes de trabajo');
+    } catch (error) {
+      console.log(error);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response) {
+          const { status, message } = axiosError.response.data as ResponseData;
+          if (status === 404) {
+            setFetchError(message);
+          } else {
+            setFetchError('Error al cargar las órdenes de trabajo');
+          }
+        } else {
+          setFetchError('No se pudo conectar con el servidor.');
+        }
       }
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: fetchError,
+      });
+      console.error(error);
     } finally {
       setCargando(false);
     }
@@ -126,16 +145,6 @@ export default function OrdenTrabajoPage() {
 
   if (cargando) {
     return <Loader />;
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
   }
 
   return (

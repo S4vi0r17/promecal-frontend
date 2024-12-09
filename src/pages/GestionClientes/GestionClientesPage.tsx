@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { ClienteListaDTO, ClienteResponse } from '@/interfaces/cliente.interface';
+import {
+  ClienteListaDTO,
+  ClienteResponse,
+} from '@/interfaces/cliente.interface';
 import {
   actualizarCliente,
   eliminarCliente,
@@ -30,17 +33,25 @@ import {
 } from '@/components/ui/table';
 
 import { Edit, Trash2, UserPlus } from 'lucide-react';
+import axios, { AxiosError } from 'axios';
+import { ResponseData } from '@/interfaces/response-data.interface';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function GestionClientesPage() {
   const [clientes, setClientes] = useState<ClienteListaDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
+  const [errorDialog, setErrorDialog] = useState<null | string>(null);
 
-  const [editingClient, setEditingClient] = useState<ClienteListaDTO | null>(null);
+  const [editingClient, setEditingClient] = useState<ClienteListaDTO | null>(
+    null
+  );
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [clientToDelete, setClientToDelete] = useState<ClienteListaDTO | null>(null);
+  const [clientToDelete, setClientToDelete] = useState<ClienteListaDTO | null>(
+    null
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -106,7 +117,16 @@ export default function GestionClientesPage() {
       setIsAddOpen(false);
       setEditingClient(null);
     } catch (err) {
-      console.error('Error al agregar cliente:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+          setInterval(() => {
+            setErrorDialog(null);
+          }, 3000);
+        }
+      }
     }
   };
 
@@ -135,7 +155,16 @@ export default function GestionClientesPage() {
       setIsEditOpen(false);
       setEditingClient(null);
     } catch (err) {
-      console.error('Error al editar cliente:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+          setInterval(() => {
+            setErrorDialog(null);
+          }, 3000);
+        }
+      }
     }
   };
 
@@ -148,7 +177,16 @@ export default function GestionClientesPage() {
       setIsDeleteOpen(false);
       setClientToDelete(null);
     } catch (err) {
-      console.error('Error al eliminar cliente:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+          setInterval(() => {
+            setErrorDialog(null);
+          }, 3000);
+        }
+      }
     }
   };
 
@@ -200,11 +238,15 @@ export default function GestionClientesPage() {
             <TableBody>
               {clientes.map((cliente: ClienteListaDTO) => (
                 <TableRow key={cliente.id}>
-                  <TableCell className="text-center py-2 px-4">{cliente.id}</TableCell>
+                  <TableCell className="text-center py-2 px-4">
+                    {cliente.id}
+                  </TableCell>
                   <TableCell className="text-center py-2 px-4">
                     {cliente.nombrecompleto}
                   </TableCell>
-                  <TableCell className="text-center py-2 px-4">{cliente.dni}</TableCell>
+                  <TableCell className="text-center py-2 px-4">
+                    {cliente.dni}
+                  </TableCell>
                   <TableCell className="text-center py-2 px-4">
                     {cliente.celular}
                   </TableCell>
@@ -243,6 +285,12 @@ export default function GestionClientesPage() {
             <DialogHeader>
               <DialogTitle>Agregar Nuevo Cliente</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleAddClient} className="space-y-4">
               <div>
                 <Label htmlFor="dni">DNI</Label>
@@ -255,10 +303,10 @@ export default function GestionClientesPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="fullName">Nombre Completo</Label>
+                <Label htmlFor="nombrecompleto">Nombre Completo</Label>
                 <Input
-                  id="fullName"
-                  name="fullName"
+                  id="nombrecompleto"
+                  name="nombrecompleto"
                   value={editingClient?.nombrecompleto || ''}
                   onChange={handleInputChange}
                   required
@@ -297,6 +345,12 @@ export default function GestionClientesPage() {
             <DialogHeader>
               <DialogTitle>Modificar Cliente</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleEditClient} className="space-y-4">
               <div>
                 <Label htmlFor="dni">DNI</Label>
@@ -351,6 +405,12 @@ export default function GestionClientesPage() {
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <DialogDescription>
               ¿Estás seguro de que deseas eliminar al siguiente cliente? Esta
               acción no puede deshacerse.
@@ -361,7 +421,8 @@ export default function GestionClientesPage() {
                   <strong>ID:</strong> {clientToDelete.id}
                 </p>
                 <p>
-                  <strong>Nombre Completo:</strong> {clientToDelete.nombrecompleto}
+                  <strong>Nombre Completo:</strong>{' '}
+                  {clientToDelete.nombrecompleto}
                 </p>
                 <p>
                   <strong>DNI:</strong> {clientToDelete.dni}

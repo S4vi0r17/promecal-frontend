@@ -36,6 +36,7 @@ import Loader from '@/components/Loader';
 import { Trash, UserPen, UserPlus2 } from 'lucide-react';
 import axios, { AxiosError } from 'axios';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { ResponseData } from '@/interfaces/response-data.interface';
 
 export default function GestionProformasPage() {
   const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
@@ -124,12 +125,8 @@ export default function GestionProformasPage() {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
         if (axiosError.response) {
-          const { status, data } = axiosError.response as {
-            status: number;
-            data: string;
-          };
-          setErrorDialog(data);
-          // Fata implementar mejor el manejo de errores
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
         }
 
         setTimeout(() => {
@@ -166,12 +163,8 @@ export default function GestionProformasPage() {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
         if (axiosError.response) {
-          const { status, data } = axiosError.response as {
-            status: number;
-            data: string;
-          };
-          setErrorDialog(data);
-          // Fata implementar mejor el manejo de errores
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
         }
 
         setTimeout(() => {
@@ -192,7 +185,17 @@ export default function GestionProformasPage() {
       setIsDeleteOpen(false);
       setProformaToDelete(null);
     } catch (err) {
-      console.error('Error al eliminar proforma:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+        }
+
+        setTimeout(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -538,6 +541,12 @@ export default function GestionProformasPage() {
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <DialogDescription>
               ¿Estás seguro de que deseas eliminar la siguiente proforma? Esta
               acción no puede deshacerse.

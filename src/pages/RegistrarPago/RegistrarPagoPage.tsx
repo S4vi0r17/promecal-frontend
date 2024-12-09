@@ -23,6 +23,9 @@ import {
   obtenerProformaServicioPorCliente,
   registrarPagoService,
 } from '@/services/proforma-servicio.service';
+import axios from 'axios';
+import { AxiosError } from 'axios';
+import { ResponseData } from '@/interfaces/response-data.interface';
 
 export default function RegistrarPago() {
   const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
@@ -41,11 +44,20 @@ export default function RegistrarPago() {
       setProformas(data);
       setProformaSeleccionada(null);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Ocurrió un error al buscar las proformas'
-      );
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { status, message } = axiosError.response.data as ResponseData;
+          if (status === 404) {
+            setError(message);
+          }
+        }
+      }
+      // setError(
+      //   err instanceof Error
+      //     ? err.message
+      //     : 'Ocurrió un error al buscar las proformas'
+      // );
       setProformas([]);
     } finally {
       setCargando(false);

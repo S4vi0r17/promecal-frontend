@@ -14,6 +14,7 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
+import { ResponseData } from '@/interfaces/response-data.interface';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -55,10 +56,7 @@ export default function LoginPage() {
         const axiosError = error as AxiosError;
 
         if (axiosError.response) {
-          const { status, message } = axiosError.response.data as {
-            status: number;
-            message: string;
-          };
+          const { status, message } = axiosError.response.data as ResponseData;
 
           if (status === 404) {
             setErrorMessage(message);

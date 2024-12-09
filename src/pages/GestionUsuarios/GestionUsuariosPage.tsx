@@ -34,11 +34,15 @@ import {
 } from '@/components/ui/table';
 import { Pencil, Trash, UserPlus } from 'lucide-react';
 import Loader from '@/components/Loader';
+import axios, { AxiosError } from 'axios';
+import { ResponseData } from '../../interfaces/response-data.interface';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function GestionUsuariosPage() {
   const [usuarios, setUsuarios] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
+  const [errorDialog, setErrorDialog] = useState<null | string>(null);
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -126,7 +130,16 @@ export default function GestionUsuariosPage() {
       setIsAddOpen(false);
       setEditingUser(null);
     } catch (err) {
-      console.error('Error al agregar usuario:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+        }
+        setInterval(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -153,7 +166,16 @@ export default function GestionUsuariosPage() {
       setIsEditOpen(false);
       setEditingUser(null);
     } catch (err) {
-      console.error('Error al editar usuario:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+        }
+        setInterval(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -168,7 +190,16 @@ export default function GestionUsuariosPage() {
       setUserToDelete(null);
       // await fetchUsuarios();
     } catch (err) {
-      console.error('Error al eliminar usuario:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { message } = axiosError.response.data as ResponseData;
+          setErrorDialog(message);
+        }
+        setInterval(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -259,6 +290,12 @@ export default function GestionUsuariosPage() {
             <DialogHeader>
               <DialogTitle>Agregar Nuevo Usuario</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleAddUser} className="space-y-4">
               <div>
                 <Label htmlFor="username">Nombre de Usuario</Label>
@@ -339,6 +376,12 @@ export default function GestionUsuariosPage() {
             <DialogHeader>
               <DialogTitle>Modificar Usuario</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleEditUser} className="space-y-4">
               <div>
                 <Label htmlFor="username">Nombre de Usuario</Label>
@@ -408,6 +451,12 @@ export default function GestionUsuariosPage() {
             <DialogHeader>
               <DialogTitle>Confirmar Eliminación</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <DialogDescription>
               ¿Estás seguro de que deseas eliminar al siguiente usuario? Esta
               acción no puede deshacerse.
