@@ -9,8 +9,6 @@ import {
 
 import { ProformaServicioListaDTO } from '@/interfaces/proforma-servicio.interface';
 
-import api from '../../services/api';
-
 import {
   Dialog,
   DialogContent,
@@ -36,11 +34,14 @@ import {
 import Loader from '@/components/Loader';
 
 import { Trash, UserPen, UserPlus2 } from 'lucide-react';
+import axios, { AxiosError } from 'axios';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function GestionProformasPage() {
   const [proformas, setProformas] = useState<ProformaServicioListaDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
+  const [errorDialog, setErrorDialog] = useState<null | string>(null);
 
   const [editingProforma, setEditingProforma] =
     useState<ProformaServicioListaDTO | null>(null);
@@ -109,8 +110,7 @@ export default function GestionProformasPage() {
         fecha: editingProforma?.fecha || '',
       };
 
-      const response = await api.post('/api/proformaservicio', proformaData);
-      // const data = await insertarProformaServicio(proformaData);
+      const response = await insertarProformaServicio(proformaData);
 
       const newProforma = {
         id: response.data.id,
@@ -121,7 +121,21 @@ export default function GestionProformasPage() {
       setIsAddOpen(false);
       setEditingProforma(null);
     } catch (err) {
-      console.error('Error al agregar proforma:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { status, data } = axiosError.response as {
+            status: number;
+            data: string;
+          };
+          setErrorDialog(data);
+          // Fata implementar mejor el manejo de errores
+        }
+
+        setTimeout(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -149,7 +163,21 @@ export default function GestionProformasPage() {
       setIsEditOpen(false);
       setEditingProforma(null);
     } catch (err) {
-      console.error('Error al editar proforma:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { status, data } = axiosError.response as {
+            status: number;
+            data: string;
+          };
+          setErrorDialog(data);
+          // Fata implementar mejor el manejo de errores
+        }
+
+        setTimeout(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -304,6 +332,12 @@ export default function GestionProformasPage() {
             <DialogHeader>
               <DialogTitle>Agregar Nueva Proforma</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleAddProforma} className="space-y-4">
               <div>
                 <Label htmlFor="codigo_ordentrabajo">
@@ -389,12 +423,7 @@ export default function GestionProformasPage() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Guardar Proforma
-                </Button>
+                <Button type="submit">Guardar Proforma</Button>
               </div>
             </form>
           </DialogContent>
@@ -406,6 +435,12 @@ export default function GestionProformasPage() {
             <DialogHeader>
               <DialogTitle>Modificar Proforma</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleEditProforma} className="space-y-4">
               <div>
                 <Label htmlFor="codigo_ordentrabajo">
@@ -491,12 +526,7 @@ export default function GestionProformasPage() {
                 />
               </div>
               <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Guardar Cambios
-                </Button>
+                <Button type="submit">Guardar Cambios</Button>
               </div>
             </form>
           </DialogContent>

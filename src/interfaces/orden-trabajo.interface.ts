@@ -1,6 +1,5 @@
 export interface OrdenTrabajoDTO {
     dni: string;
-    nombrecompleto: string;
     fecha: string;
     descripcion: string;
     modelo: string;

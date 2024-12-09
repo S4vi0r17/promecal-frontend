@@ -11,12 +11,12 @@ export const obtenerTodosLasProformas = async (): Promise<
   return data;
 };
 
-// TODO: Falta implementar
 export const insertarProformaServicio = async (
   proforma: ProformaServicioDTO
-): Promise<void> => {
+): Promise<{ data: { id: number } }> => {
   const data = await api.post('/api/proformaservicio', proforma);
-  console.log(data);
+  console.log({ data });
+  return data;
 };
 
 // Obtener detalles de una proforma de servicio por ID

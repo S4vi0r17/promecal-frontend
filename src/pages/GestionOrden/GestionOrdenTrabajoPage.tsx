@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
-import api from '../../services/api';
+import axios, { AxiosError } from 'axios';
 import { OrdenTrabajoListaDTO } from '@/interfaces/orden-trabajo.interface';
-import { getOrdenesTrabajo } from '@/services/orden-trabajo.service';
+import {
+  createOrdenTrabajo,
+  deleteOrdenTrabajo,
+  getOrdenesTrabajo,
+  tempUpdateOrdenTrabajo,
+} from '@/services/orden-trabajo.service';
 
 import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
@@ -34,11 +38,13 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Pencil, Trash, UserPlus } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function GestionOrdenTrabajoPage() {
   const [ordenes, setOrdenes] = useState<OrdenDeTrabajo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
+  const [errorDialog, setErrorDialog] = useState<null | string>(null);
 
   const [editingOrder, setEditingOrder] = useState<OrdenDeTrabajo | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -54,10 +60,15 @@ export default function GestionOrdenTrabajoPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const totalPages = Math.ceil(ordenes.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = ordenes.slice(startIndex, endIndex);
+  const paginationData = useMemo(() => {
+    const totalPages = Math.ceil(ordenes.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = ordenes.slice(startIndex, endIndex);
+    return { totalPages, currentItems };
+  }, [ordenes, currentPage, itemsPerPage]);
+
+  const { totalPages, currentItems } = paginationData;
 
   const getVisiblePages = useMemo(() => {
     const delta = 1;
@@ -169,46 +180,57 @@ export default function GestionOrdenTrabajoPage() {
     e.preventDefault();
     try {
       const orderData = {
-        dni: editingOrder?.dni,
-        codigo: editingOrder?.codigo,
-        fecha: editingOrder?.fecha,
-        descripcion: editingOrder?.descripcion,
-        modelo: editingOrder?.modelo,
-        marca: editingOrder?.marca,
-        rajaduras: editingOrder?.rajaduras,
-        manchas: editingOrder?.manchas,
-        golpes: editingOrder?.golpes,
+        dni: editingOrder?.dni || '',
+        codigo: editingOrder?.codigo || '',
+        fecha: editingOrder?.fecha || '',
+        descripcion: editingOrder?.descripcion || '',
+        modelo: editingOrder?.modelo || '',
+        marca: editingOrder?.marca || '',
+        rajaduras: editingOrder?.rajaduras || false,
+        manchas: editingOrder?.manchas || false,
+        golpes: editingOrder?.golpes || false,
       };
 
-      const formData = new FormData();
-      formData.append(
-        'orden',
-        new Blob([JSON.stringify(orderData)], { type: 'application/json' })
+      await createOrdenTrabajo(orderData, selectedFile);
+
+      const fetchResponse = await getOrdenesTrabajo();
+
+      // Mapear las órdenes como lo hacías originalmente
+      const ordenesMapeadas = fetchResponse.map(
+        (orden: OrdenTrabajoListaDTO) => ({
+          id: orden.id,
+          dni: orden.dni,
+          codigo: orden.codigo,
+          fecha: orden.fecha,
+          descripcion: orden.descripcion,
+          modelo: orden.modelo,
+          marca: orden.marca,
+          rajaduras: orden.rajaduras,
+          manchas: orden.manchas,
+          golpes: orden.golpes,
+        })
       );
-      if (selectedFile) {
-        formData.append('file', selectedFile);
-      }
 
-      await api.post('/api/ordentrabajo', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      // Actualizar la lista de órdenes
-      const response = await getOrdenesTrabajo();
-      console.log(response);
-      setOrdenes(response.data);
+      // Actualizar el estado con las órdenes mapeadas
+      setOrdenes(ordenesMapeadas);
 
       setIsAddOpen(false);
       setEditingOrder(null);
       setSelectedFile(null);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error(
-          'Error al agregar la orden de trabajo:',
-          err.response?.data
-        );
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          const { status, data } = axiosError.response as {
+            status: number;
+            data: string;
+          };
+          setErrorDialog(data);
+        }
+
+        setInterval(() => {
+          setErrorDialog(null);
+        }, 3000);
       }
     }
   };
@@ -238,21 +260,31 @@ export default function GestionOrdenTrabajoPage() {
       }
 
       if (editingOrder) {
-        await api.put(`/api/ordentrabajo/${editingOrder.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        await tempUpdateOrdenTrabajo(editingOrder.id, formData);
 
         // Actualizar la lista de órdenes
-        const response = await api.get('/api/ordentrabajo');
+        const response = await getOrdenesTrabajo();
         setOrdenes(response.data);
       }
       setIsEditOpen(false);
       setEditingOrder(null);
       setSelectedFile(null);
     } catch (err) {
-      console.error('Error al editar la orden de trabajo:', err);
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response) {
+          console.log('axiosError.response', axiosError.response);
+          const { status, data } = axiosError.response as {
+            status: number;
+            data: string;
+          };
+          setErrorDialog(data);
+        }
+
+        setInterval(() => {
+          setErrorDialog(null);
+        }, 3000);
+      }
     }
   };
 
@@ -260,7 +292,7 @@ export default function GestionOrdenTrabajoPage() {
     if (!orderToDelete) return;
 
     try {
-      await api.delete(`/api/ordentrabajo/${orderToDelete.id}`);
+      await deleteOrdenTrabajo(orderToDelete.id);
       setOrdenes(ordenes.filter((orden) => orden.id !== orderToDelete.id));
       setIsDeleteOpen(false);
       setOrderToDelete(null);
@@ -410,6 +442,12 @@ export default function GestionOrdenTrabajoPage() {
             <DialogHeader>
               <DialogTitle>Agregar Nueva Orden de Trabajo</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleAddOrder} className="space-y-4">
               <div>
                 <Label htmlFor="dni">DNI del Cliente</Label>
@@ -527,6 +565,12 @@ export default function GestionOrdenTrabajoPage() {
             <DialogHeader>
               <DialogTitle>Modificar Orden de Trabajo</DialogTitle>
             </DialogHeader>
+            {errorDialog && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorDialog}</AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleEditOrder} className="space-y-4">
               <div>
                 <Label htmlFor="dni">DNI del Cliente</Label>
@@ -622,7 +666,9 @@ export default function GestionOrdenTrabajoPage() {
                 </Label>
               </div>
               <div>
-                <Label htmlFor="file">Archivo (PDF)</Label>
+                <Label htmlFor="file">
+                  Archivo (PDF) En modificar no funca
+                </Label>
                 <Input
                   id="file"
                   name="file"

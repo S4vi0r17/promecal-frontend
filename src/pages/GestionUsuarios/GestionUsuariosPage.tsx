@@ -226,8 +226,8 @@ export default function GestionUsuariosPage() {
                   <TableCell className="py-2 px-4 text-center">
                     {usuario.email}
                   </TableCell>
-                  <TableCell className="py-2 px-4 text-center">
-                    {usuario.role}
+                  <TableCell className="py-2 px-4 text-center capitalize">
+                    {usuario.role.split('_').join(' ').toLowerCase()}
                   </TableCell>
                   <TableCell className="py-2 px-4 text-center">
                     <div className="flex justify-center space-x-2">

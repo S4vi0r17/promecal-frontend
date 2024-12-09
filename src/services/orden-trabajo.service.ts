@@ -8,11 +8,14 @@ export const getOrdenesTrabajo = async (filters?: Record<string, string>) => {
 
 export const createOrdenTrabajo = async (
   orden: OrdenTrabajoDTO,
-  file: File
+  file: File | null
 ) => {
   const formData = new FormData();
-  formData.append('orden', JSON.stringify(orden));
-  formData.append('file', file);
+  formData.append(
+    'orden',
+    new Blob([JSON.stringify(orden)], { type: 'application/json' })
+  );
+  if (file) formData.append('file', file);
 
   await api.post('/api/ordentrabajo', formData, {
     headers: {
@@ -32,7 +35,10 @@ export const updateOrdenTrabajo = async (
   file?: File
 ) => {
   const formData = new FormData();
-  formData.append('orden', JSON.stringify(orden));
+  formData.append(
+    'orden',
+    new Blob([JSON.stringify(orden)], { type: 'application/json' })
+  );
   if (file) formData.append('file', file);
 
   await api.put(`/api/ordentrabajo/${id}`, formData, {
@@ -40,6 +46,14 @@ export const updateOrdenTrabajo = async (
       'Content-Type': 'multipart/form-data',
     },
   });
+};
+
+// Este es un servicio basura xD
+export const tempUpdateOrdenTrabajo = async (
+  id: number,
+  formData: FormData
+): Promise<void> => {
+  await api.put(`/api/ordentrabajo/${id}`, formData);
 };
 
 export const deleteOrdenTrabajo = async (id: number) => {
