@@ -17,3 +17,13 @@ export const insertarInformeDiagnostico = async (
     },
   });
 };
+
+export const tempInsertarInformeDiagnostico = async (
+  formData: FormData
+): Promise<void> => {
+  await api.post('/api/informediagnostico', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};

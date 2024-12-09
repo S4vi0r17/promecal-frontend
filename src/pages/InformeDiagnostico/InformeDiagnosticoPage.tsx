@@ -1,5 +1,8 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 
+import { getOrdenesTrabajo, getOrdenTrabajoById } from '@/services/orden-trabajo.service';
+import { tempInsertarInformeDiagnostico } from '@/services/informe-diagnostico.service';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,8 +11,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
 import { toast } from '@/hooks/use-toast';
-
-import api from '@/services/api';
 
 interface OrdenTrabajo {
   id: number;
@@ -52,10 +53,8 @@ export default function InformeDiagnosticoForm() {
   useEffect(() => {
     const fetchOrdenesTrabajo = async () => {
       try {
-        const response = await api.get(
-          'http://localhost:8080/api/ordentrabajo'
-        );
-        setOrdenesTrabajo(response.data);
+        const data = await getOrdenesTrabajo();
+        setOrdenesTrabajo(data);
       } catch (error) {
         console.error('Error fetching ordenes de trabajo:', error);
         toast({
@@ -71,10 +70,8 @@ export default function InformeDiagnosticoForm() {
 
   const onOrdenTrabajoChange = async (id: number) => {
     try {
-      const response = await api.get(
-        `http://localhost:8080/api/ordentrabajo/${id}`
-      );
-      setSelectedOrden(response.data);
+      const data = await getOrdenTrabajoById(id);
+      setSelectedOrden(data);
       setFormData((prev) => ({ ...prev, id_ordenTrabajo: id }));
     } catch (error) {
       console.error('Error fetching orden de trabajo:', error);
@@ -122,7 +119,8 @@ export default function InformeDiagnosticoForm() {
     if (!formData.recomendaciones)
       newErrors.recomendaciones = 'Las recomendaciones son requeridas';
     if (formData.equipoirreparable && !formData.justificacionIrreparable) {
-      newErrors.justificacionIrreparable = 'La justificación es requerida para equipos irreparables';
+      newErrors.justificacionIrreparable =
+        'La justificación es requerida para equipos irreparables';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -149,17 +147,17 @@ export default function InformeDiagnosticoForm() {
         formDataToSend.append('file', formData.file);
       }
 
-      const response = await api.post(
-        'http://localhost:8080/api/informediagnostico',
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      // const response = await api.post(
+      //   'http://localhost:8080/api/informediagnostico',
+      //   formDataToSend,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   }
+      // );
 
-      console.log(response.data);
+      await tempInsertarInformeDiagnostico(formDataToSend);
 
       // Mostrar el toast de confirmación
       toast({
