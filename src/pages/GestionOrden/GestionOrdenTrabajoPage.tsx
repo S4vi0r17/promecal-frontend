@@ -154,6 +154,9 @@ export default function GestionOrdenTrabajoPage() {
           manchas: orden.manchas,
           golpes: orden.golpes,
         }));
+        // ordenar por id
+        ordenesMapeadas.sort((a: { id: number; }, b: { id: number; }) => a.id - b.id);
+        console.log('ordenesMapeadas', ordenesMapeadas);
         setOrdenes(ordenesMapeadas);
       } catch (err) {
         console.error('Error al cargar las órdenes de trabajo:', err);
@@ -261,7 +264,20 @@ export default function GestionOrdenTrabajoPage() {
 
         // Actualizar la lista de órdenes
         const response = await getOrdenesTrabajo();
-        setOrdenes(response.data);
+        // mapear ordenes
+        const ordenesMapeadas = response.map((orden: OrdenTrabajoListaDTO) => ({
+          id: orden.id,
+          dni: orden.dni,
+          codigo: orden.codigo,
+          fecha: orden.fecha,
+          descripcion: orden.descripcion,
+          modelo: orden.modelo,
+          marca: orden.marca,
+          rajaduras: orden.rajaduras,
+          manchas: orden.manchas,
+          golpes: orden.golpes,
+        }));
+        setOrdenes(ordenesMapeadas);
       }
       setIsEditOpen(false);
       setEditingOrder(null);

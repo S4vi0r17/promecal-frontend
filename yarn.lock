@@ -518,6 +518,13 @@
     aria-hidden "^1.1.1"
     react-remove-scroll "2.6.0"
 
+"@radix-ui/react-separator@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-separator/-/react-separator-1.1.0.tgz#ee0f4d86003b0e3ea7bc6ccab01ea0adee32663e"
+  integrity sha512-3uBAs+egzvJBDZAzvb/n4NxxOYpnspmWxO2u5NbZ8Y6FM/NdrGSF9bop3Cf6F6C71z1rTSn8KV0Fo2ZVd79lGA==
+  dependencies:
+    "@radix-ui/react-primitive" "2.0.0"
+
 "@radix-ui/react-slot@1.1.0", "@radix-ui/react-slot@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.1.0.tgz"
@@ -1952,7 +1959,7 @@ prelude-ls@^1.2.1:
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
 "promecal-frontend@file:.":
-  version "0.0.0"
+  version "0.9.5"
   dependencies:
     "@radix-ui/react-alert-dialog" "^1.1.2"
     "@radix-ui/react-avatar" "^1.1.1"
@@ -1971,7 +1978,7 @@ prelude-ls@^1.2.1:
     framer-motion "^11.13.1"
     jwt-decode "^4.0.0"
     lucide-react "^0.454.0"
-    promecal-frontend "file:../../AppData/Local/Yarn/Cache/v6/npm-promecal-frontend-0.0.0-a3fba239-bc0d-470f-abb0-63a56d27465d-1733373846060/node_modules/promecal-frontend"
+    promecal-frontend "file:../../AppData/Local/Yarn/Cache/v6/npm-promecal-frontend-0.9.5-d75ad23d-89d9-40e2-9a62-12717e9837cb-1733799606149/node_modules/promecal-frontend"
     react "^18.3.1"
     react-dom "^18.3.1"
     react-router-dom "^6.27.0"
