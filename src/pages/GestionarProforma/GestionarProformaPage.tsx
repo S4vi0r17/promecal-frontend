@@ -62,31 +62,29 @@ export default function GestionProformasPage() {
     }
   };
 
-  useEffect(() => {
-    const fetchProformas = async () => {
-      try {
-        const data = await obtenerTodosLasProformas();
-        const proformasData = data.map(
-          (proforma: ProformaServicioListaDTO) => ({
-            id: proforma.id,
-            codigo_ordentrabajo: proforma.codigo_ordentrabajo,
-            detalleServicio: proforma.detalleServicio,
-            precioServicio: proforma.precioServicio,
-            tiempoEstimadoEntrega: proforma.tiempoEstimadoEntrega,
-            condicionesContratacion: proforma.condicionesContratacion,
-            estadoPago: proforma.estadoPago,
-            fecha: proforma.fecha,
-          })
-        );
-        setProformas(proformasData);
-        setLoading(false);
-      } catch (err) {
-        setError('Error al cargar las proformas');
-        setLoading(false);
-        console.error('Error:', err);
-      }
-    };
+  const fetchProformas = async () => {
+    try {
+      const data = await obtenerTodosLasProformas();
+      const proformasData = data.map((proforma: ProformaServicioListaDTO) => ({
+        id: proforma.id,
+        codigo_ordentrabajo: proforma.codigo_ordentrabajo,
+        detalleServicio: proforma.detalleServicio,
+        precioServicio: proforma.precioServicio,
+        tiempoEstimadoEntrega: proforma.tiempoEstimadoEntrega,
+        condicionesContratacion: proforma.condicionesContratacion,
+        estadoPago: proforma.estadoPago,
+        fecha: proforma.fecha,
+      }));
+      setProformas(proformasData);
+      setLoading(false);
+    } catch (err) {
+      setError('Error al cargar las proformas');
+      setLoading(false);
+      console.error('Error:', err);
+    }
+  };
 
+  useEffect(() => {
     fetchProformas();
   }, []);
 
@@ -119,6 +117,7 @@ export default function GestionProformasPage() {
       };
 
       setProformas([...proformas, newProforma]);
+      fetchProformas();
       setIsAddOpen(false);
       setEditingProforma(null);
     } catch (err) {
