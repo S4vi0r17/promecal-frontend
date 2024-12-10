@@ -829,6 +829,13 @@
   dependencies:
     jwt-decode "*"
 
+"@types/node@^22.10.1":
+  version "22.10.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.1.tgz#41ffeee127b8975a05f8c4f83fb89bcb2987d766"
+  integrity sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==
+  dependencies:
+    undici-types "~6.20.0"
+
 "@types/prop-types@*":
   version "15.7.13"
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.13.tgz"
@@ -1968,6 +1975,7 @@ prelude-ls@^1.2.1:
     "@radix-ui/react-icons" "^1.3.1"
     "@radix-ui/react-label" "^2.1.0"
     "@radix-ui/react-select" "^2.1.2"
+    "@radix-ui/react-separator" "^1.1.0"
     "@radix-ui/react-slot" "^1.1.0"
     "@radix-ui/react-switch" "^1.1.1"
     "@radix-ui/react-toast" "^1.2.2"
@@ -1978,7 +1986,7 @@ prelude-ls@^1.2.1:
     framer-motion "^11.13.1"
     jwt-decode "^4.0.0"
     lucide-react "^0.454.0"
-    promecal-frontend "file:../../AppData/Local/Yarn/Cache/v6/npm-promecal-frontend-0.9.5-d75ad23d-89d9-40e2-9a62-12717e9837cb-1733799606149/node_modules/promecal-frontend"
+    promecal-frontend "file:../../AppData/Local/Yarn/Cache/v6/npm-promecal-frontend-0.9.5-7869a6bd-7498-40b2-8d40-ddb450da736e-1733800999599/node_modules/promecal-frontend"
     react "^18.3.1"
     react-dom "^18.3.1"
     react-router-dom "^6.27.0"
@@ -2336,6 +2344,11 @@ typescript@~5.6.2:
   version "5.6.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.6.3.tgz"
   integrity sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==
+
+undici-types@~6.20.0:
+  version "6.20.0"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.20.0.tgz#8171bf22c1f588d1554d55bf204bc624af388433"
+  integrity sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==
 
 update-browserslist-db@^1.1.1:
   version "1.1.1"
