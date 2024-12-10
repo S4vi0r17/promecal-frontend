@@ -89,6 +89,7 @@ export default function RegistrarPago() {
       setProformaSeleccionada(null);
       setComprobante(null);
     } catch (err) {
+      console.log(err);
       setError(
         err instanceof Error
           ? err.message
