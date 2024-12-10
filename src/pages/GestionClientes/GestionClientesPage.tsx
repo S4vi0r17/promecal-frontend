@@ -60,26 +60,25 @@ export default function GestionClientesPage() {
     }
   };
 
+  const fetchClientes = async () => {
+    try {
+      const data = await obtenerTodosLosClientes();
+      const clientesMapeados = data.map((cliente: ClienteResponse) => ({
+        id: cliente.id,
+        dni: cliente.dni,
+        celular: cliente.celular,
+        direccion: cliente.direccion,
+        nombrecompleto: cliente.nombrecompleto,
+      }));
+      setClientes(clientesMapeados);
+      setLoading(false);
+    } catch (err) {
+      setError('Error al cargar los clientes');
+      setLoading(false);
+      console.error('Error:', err);
+    }
+  };
   useEffect(() => {
-    const fetchClientes = async () => {
-      try {
-        const data = await obtenerTodosLosClientes();
-        const clientesMapeados = data.map((cliente: ClienteResponse) => ({
-          id: cliente.id,
-          dni: cliente.dni,
-          celular: cliente.celular,
-          direccion: cliente.direccion,
-          nombrecompleto: cliente.nombrecompleto,
-        }));
-        setClientes(clientesMapeados);
-        setLoading(false);
-      } catch (err) {
-        setError('Error al cargar los clientes');
-        setLoading(false);
-        console.error('Error:', err);
-      }
-    };
-
     fetchClientes();
   }, []);
 
@@ -114,6 +113,7 @@ export default function GestionClientesPage() {
       };
 
       setClientes([...clientes, newClient]);
+      fetchClientes();
       setIsAddOpen(false);
       setEditingClient(null);
     } catch (err) {
@@ -363,10 +363,10 @@ export default function GestionClientesPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="fullName">Nombre Completo</Label>
+                <Label htmlFor="nombrecompleto">Nombre Completo</Label>
                 <Input
-                  id="fullName"
-                  name="fullName"
+                  id="nombrecompleto"
+                  name="nombrecompleto"
                   value={editingClient?.nombrecompleto || ''}
                   onChange={handleInputChange}
                   required
