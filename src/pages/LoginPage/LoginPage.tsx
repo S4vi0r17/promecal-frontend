@@ -39,7 +39,7 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post<{ token: string; rol: string }>(
-        'http://localhost:8080/auth/login',
+        'https://promecal-backend.onrender.com/auth/login',
         {
           nombreusuario: username,
           contrasena: password,
