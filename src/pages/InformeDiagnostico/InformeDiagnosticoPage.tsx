@@ -169,6 +169,8 @@ export default function InformeDiagnosticoForm() {
       //   }
       // );
 
+      // console.log(response);
+
       await tempInsertarInformeDiagnostico(formDataToSend);
 
       // Mostrar el toast de confirmación
