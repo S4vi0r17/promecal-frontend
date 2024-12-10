@@ -104,8 +104,10 @@ export default function GestionClientesPage() {
 
       await insertarCliente(clienTableCellata);
 
+      // TODO: posible error
       const newClient = {
-        id: clientes.length + 1,
+        id: 
+        Math.max(...clientes.map(cliente => cliente.id)) + 1,
         dni: editingClient?.dni || '',
         celular: editingClient?.celular || '',
         direccion: editingClient?.direccion || '',
