@@ -137,7 +137,18 @@ export default function GestionProformasPage() {
 
   const handleEditProforma = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!editingProforma) return;
+    if (!editingProforma || !editingProforma.id) {
+      console.error('No proforma selected for editing or invalid ID');
+      return;
+    }
+
+    const proformaId = Number(editingProforma.id);
+
+    if (isNaN(proformaId)) {
+      console.error('Invalid proforma ID');
+      return;
+    }
+
     try {
       const proformaData = {
         codigo_ordentrabajo: editingProforma.codigo_ordentrabajo,
@@ -149,7 +160,7 @@ export default function GestionProformasPage() {
         fecha: editingProforma.fecha,
       };
 
-      await actualizarProformaServicio(editingProforma.id, proformaData);
+      await actualizarProformaServicio(proformaId, proformaData);
 
       setProformas(
         proformas.map((proforma) =>
