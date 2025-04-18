@@ -38,9 +38,10 @@ export default function LoginPage() {
     setErrorMessage(null);
 
     try {
+      const apiUrl = import.meta.env.VITE_API_URL_PROD || import.meta.env.VITE_API_URL_LOCAL;
+
       const response = await axios.post<{ token: string; rol: string }>(
-        // import.meta.env.VITE_API_URL + '/auth/login',
-        'https://promecal-backend.onrender.com/auth/login',
+        `${apiUrl}/auth/login`,
         {
           nombreusuario: username,
           contrasena: password,
